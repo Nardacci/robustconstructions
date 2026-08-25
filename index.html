@@ -3,14 +3,10 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>RobustConstructions - Ranking, Scoring & Apuração</title>
+  <title>RobustConstructions - Gestão de Bônus & Ocorrências</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-  
-  <!-- Chart.js para o Gráfico de Ranking -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
-  <!-- SDK oficial do Supabase -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
   <style>
@@ -46,8 +42,8 @@
             <text x="70" y="50" font-family="system-ui, -apple-system, sans-serif" font-weight="800" font-size="12" fill="#f59e0b" letter-spacing="2.5">CONSTRUCTIONS</text>
           </svg>
         </div>
-        <h1 class="text-xl font-black text-white tracking-tight">Ranking & Scoring Anual</h1>
-        <p class="text-xs text-slate-400 font-medium mt-1">Gestão de Performance de Campo & Apuração</p>
+        <h1 class="text-xl font-black text-white tracking-tight">Gestão de Bônus & Ocorrências</h1>
+        <p class="text-xs text-slate-400 font-medium mt-1">Sistema de Abatimento por Desconto Semanal</p>
       </div>
       
       <form onsubmit="handleLogin(event)" class="p-8 space-y-5">
@@ -74,7 +70,7 @@
     </div>
   </div>
 
-  <!-- CONTAINER PRINCIPAL DA APLICAÇÃO -->
+  <!-- CONTAINER PRINCIPAL -->
   <div id="appContainer" class="hidden min-h-screen flex flex-col">
     <header class="bg-slate-900 text-white p-4 md:px-8 border-b-4 border-amber-500 sticky top-0 z-50 shadow-md no-print">
       <div class="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-4">
@@ -95,26 +91,29 @@
             <text x="70" y="50" font-family="system-ui, -apple-system, sans-serif" font-weight="800" font-size="12" fill="#f59e0b" letter-spacing="2.5">CONSTRUCTIONS</text>
           </svg>
           <div class="border-l border-slate-700 pl-3">
-            <span class="text-[10px] text-slate-400 block uppercase font-bold tracking-wider">Ranking & Scoring Semanal</span>
+            <span class="text-[10px] text-slate-400 block uppercase font-bold tracking-wider">Métricas & Ocorrências de Campo</span>
             <span class="text-xs font-semibold text-slate-200">Logado: <strong id="userDisplayName" class="text-amber-400">office@robustconstructions.com</strong></span>
           </div>
         </div>
 
         <div class="flex items-center gap-2">
           <button onclick="navTo('dashboard')" id="navDashboard" class="px-3 py-2 rounded-xl text-xs font-bold bg-amber-500 text-slate-950 shadow-sm transition flex items-center gap-1.5">
-            <i class="fa-solid fa-trophy"></i> Leaderboard
+            <i class="fa-solid fa-chart-line"></i> Dashboard
           </button>
           <button onclick="navTo('evaluations')" id="navEvaluations" class="px-3 py-2 rounded-xl text-xs font-bold bg-slate-800 hover:bg-slate-700 text-slate-200 transition flex items-center gap-1.5 border border-slate-700">
-            <i class="fa-solid fa-calendar-week text-amber-400"></i> Avaliações Semanais
+            <i class="fa-solid fa-calendar-week text-amber-400"></i> Lançamentos
+          </button>
+          <button onclick="navTo('questions')" id="navQuestions" class="px-3 py-2 rounded-xl text-xs font-bold bg-slate-800 hover:bg-slate-700 text-slate-200 transition flex items-center gap-1.5 border border-slate-700">
+            <i class="fa-solid fa-list-check text-amber-400"></i> Ocorrências
           </button>
           <button onclick="navTo('workers')" id="navWorkers" class="px-3 py-2 rounded-xl text-xs font-bold bg-slate-800 hover:bg-slate-700 text-slate-200 transition flex items-center gap-1.5 border border-slate-700">
             <i class="fa-solid fa-users text-amber-400"></i> Avaliados
           </button>
-          <button onclick="navTo('questions')" id="navQuestions" class="px-3 py-2 rounded-xl text-xs font-bold bg-slate-800 hover:bg-slate-700 text-slate-200 transition flex items-center gap-1.5 border border-slate-700">
-            <i class="fa-solid fa-list-check text-amber-400"></i> Critérios / Perguntas
-          </button>
           <button onclick="navTo('apuracao')" id="navApuracao" class="px-3 py-2 rounded-xl text-xs font-bold bg-slate-800 hover:bg-slate-700 text-slate-200 transition flex items-center gap-1.5 border border-slate-700">
-            <i class="fa-solid fa-calculator text-emerald-400"></i> Apuração Anual
+            <i class="fa-solid fa-calculator text-emerald-400"></i> Bônus
+          </button>
+          <button onclick="navTo('config')" id="navConfig" class="px-3 py-2 rounded-xl text-xs font-bold bg-slate-800 hover:bg-slate-700 text-slate-200 transition flex items-center gap-1.5 border border-slate-700">
+            <i class="fa-solid fa-sliders text-amber-400"></i> Parâmetros
           </button>
           <button onclick="logout()" class="px-2.5 py-2 rounded-xl text-xs font-bold bg-rose-600/20 text-rose-300 hover:bg-rose-600 hover:text-white transition ml-1" title="Deslogar">
             <i class="fa-solid fa-power-off"></i>
@@ -125,61 +124,109 @@
 
     <div class="max-w-7xl mx-auto w-full p-4 md:p-6 flex-1">
 
-      <!-- ================= TELA 2: DASHBOARD ================= -->
+      <!-- ================= TELA 2: DASHBOARD GERENCIAL COMPLETO ================= -->
       <main id="viewDashboard" class="page-view space-y-6">
+        <!-- LINHA 1: KPIS PRINCIPAIS -->
         <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
           <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm flex items-center gap-4">
-            <div class="bg-amber-50 text-amber-600 p-3.5 rounded-xl text-2xl"><i class="fa-solid fa-crown"></i></div>
+            <div class="bg-amber-50 text-amber-600 p-3.5 rounded-xl text-2xl"><i class="fa-solid fa-shield-halved"></i></div>
             <div>
-              <span class="text-[10px] font-bold uppercase text-slate-400">Líder do Ranking</span>
-              <div id="dashTopWorker" class="text-xl font-black text-slate-800">-</div>
+              <span class="text-[10px] font-bold uppercase text-slate-400">Teto Inicial Padrão</span>
+              <div id="dashInitialPointsCard" class="text-2xl font-black text-slate-800">500 pts</div>
             </div>
           </div>
           <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm flex items-center gap-4">
             <div class="bg-blue-50 text-blue-600 p-3.5 rounded-xl text-xl"><i class="fa-solid fa-clipboard-check"></i></div>
             <div>
-              <span class="text-[10px] font-bold uppercase text-slate-400">Avaliações Realizadas</span>
+              <span class="text-[10px] font-bold uppercase text-slate-400">Ocorrências Registradas</span>
               <div id="dashTotalCount" class="text-2xl font-black text-slate-800">0</div>
             </div>
           </div>
           <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm flex items-center gap-4">
-            <div class="bg-emerald-50 text-emerald-600 p-3.5 rounded-xl text-xl"><i class="fa-solid fa-star"></i></div>
+            <div class="bg-rose-50 text-rose-600 p-3.5 rounded-xl text-xl"><i class="fa-solid fa-minus"></i></div>
             <div>
-              <span class="text-[10px] font-bold uppercase text-slate-400">Maior Pontuação</span>
-              <div id="dashTopScore" class="text-2xl font-black text-emerald-600">0 pts</div>
+              <span class="text-[10px] font-bold uppercase text-slate-400">Pontos Abatidos</span>
+              <div id="dashTotalPenalty" class="text-2xl font-black text-rose-600">0 pts</div>
             </div>
           </div>
           <div class="bg-gradient-to-br from-slate-900 to-slate-800 text-white p-5 rounded-2xl border border-slate-700 shadow-sm flex items-center gap-4">
             <div class="bg-emerald-500/20 text-emerald-400 p-3.5 rounded-xl text-xl border border-emerald-500/30"><i class="fa-solid fa-sack-dollar"></i></div>
             <div>
-              <span class="text-[10px] font-bold uppercase text-emerald-400">Bônus a ser Pago (Projeção)</span>
+              <span class="text-[10px] font-bold uppercase text-emerald-400">Projeção de Bônus Total</span>
               <div id="dashTotalBonusToPay" class="text-2xl font-black text-emerald-400">$0.00</div>
             </div>
           </div>
         </div>
 
-        <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm space-y-4">
-          <div class="flex justify-between items-center border-b border-slate-100 pb-3">
-            <h3 class="text-xs font-bold uppercase tracking-wider text-slate-700 flex items-center gap-2">
-              <i class="fa-solid fa-chart-bar text-amber-500"></i> Somatório de Pontuação dos Avaliados (Ranking Geral)
-            </h3>
-            <span class="text-[10px] text-slate-400 font-semibold">Acumulado Anual</span>
+        <!-- LINHA 2: CARDS DE DESTAQUES INDIVIDUAIS E EFICIÊNCIA -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm flex items-center gap-4">
+            <div class="bg-emerald-50 text-emerald-600 p-3.5 rounded-xl text-xl"><i class="fa-solid fa-trophy"></i></div>
+            <div>
+              <span class="text-[10px] font-bold uppercase text-slate-400 block">Maior Preservação (Líder)</span>
+              <div id="dashBestWorker" class="text-sm font-black text-slate-800 truncate">-</div>
+              <span id="dashBestWorkerPts" class="text-[10px] font-extrabold text-emerald-600 block">0 pts mantidos</span>
+            </div>
           </div>
-          <div class="h-80 relative w-full">
-            <canvas id="rankingChart"></canvas>
+
+          <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm flex items-center gap-4">
+            <div class="bg-rose-50 text-rose-600 p-3.5 rounded-xl text-xl"><i class="fa-solid fa-triangle-exclamation"></i></div>
+            <div>
+              <span class="text-[10px] font-bold uppercase text-slate-400 block">Menor Preservação (Alerta)</span>
+              <div id="dashWorstWorker" class="text-sm font-black text-slate-800 truncate">-</div>
+              <span id="dashWorstWorkerPts" class="text-[10px] font-extrabold text-rose-600 block">0 pts mantidos</span>
+            </div>
+          </div>
+
+          <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm flex items-center gap-4">
+            <div class="bg-indigo-50 text-indigo-600 p-3.5 rounded-xl text-xl"><i class="fa-solid fa-percent"></i></div>
+            <div>
+              <span class="text-[10px] font-bold uppercase text-slate-400 block">Retenção de Bônus da Obra</span>
+              <div id="dashRetentionRate" class="text-2xl font-black text-indigo-600">100%</div>
+              <span class="text-[10px] font-bold text-slate-400 block">Eficiência Global</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- LINHA 3: GRÁFICOS ANALÍTICOS (LADO A LADO) -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <!-- GRÁFICO 1: SALDO DE PONTOS POR AVALIADO -->
+          <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm space-y-4">
+            <div class="flex justify-between items-center border-b border-slate-100 pb-3">
+              <h3 class="text-xs font-bold uppercase tracking-wider text-slate-700 flex items-center gap-2">
+                <i class="fa-solid fa-chart-bar text-amber-500"></i> Saldo Restante por Avaliado
+              </h3>
+              <span class="text-[10px] text-slate-400 font-semibold">Teto Inicial - Ocorrências</span>
+            </div>
+            <div class="h-72 relative w-full">
+              <canvas id="rankingChart"></canvas>
+            </div>
+          </div>
+
+          <!-- GRÁFICO 2: TOP OCORRÊNCIAS MAIS FREQUENTES -->
+          <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm space-y-4">
+            <div class="flex justify-between items-center border-b border-slate-100 pb-3">
+              <h3 class="text-xs font-bold uppercase tracking-wider text-slate-700 flex items-center gap-2">
+                <i class="fa-solid fa-fire text-rose-500"></i> Ocorrências Mais Frequentes (Top 5)
+              </h3>
+              <span class="text-[10px] text-slate-400 font-semibold">Volume de Faltas/Desvios</span>
+            </div>
+            <div class="h-72 relative w-full">
+              <canvas id="occurrencesChart"></canvas>
+            </div>
           </div>
         </div>
       </main>
 
-      <!-- ================= TELA 3: AVALIAÇÃO SEMANAL ================= -->
+      <!-- ================= TELA 3: LANÇAMENTOS ================= -->
       <main id="viewEvaluations" class="page-view space-y-6 hidden">
         <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 border-b border-slate-200 pb-3">
           <div>
-            <h2 class="text-lg font-black text-slate-900 flex items-center gap-2"><i class="fa-solid fa-calendar-week text-amber-500"></i> Avaliações Semanais Registradas</h2>
-            <p class="text-xs text-slate-500">Consulte, pesquise, edite e cadastre novas avaliações de campo.</p>
+            <h2 class="text-lg font-black text-slate-900 flex items-center gap-2"><i class="fa-solid fa-calendar-week text-amber-500"></i> Lançamentos de Ocorrências</h2>
+            <p class="text-xs text-slate-500">Consulte, pesquise, edite e registre as ocorrências semanais da equipe.</p>
           </div>
           <button onclick="openNewEvalForm()" class="bg-amber-500 hover:bg-amber-600 text-slate-950 font-bold px-4 py-2.5 rounded-xl text-xs shadow flex items-center gap-2">
-            <i class="fa-solid fa-plus"></i> Incluir Nova Avaliação
+            <i class="fa-solid fa-plus"></i> Novo Lançamento
           </button>
         </div>
 
@@ -188,7 +235,6 @@
             <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-3 text-slate-400 text-xs"></i>
             <input type="text" id="evalSearchQuery" oninput="renderEvaluationsGrid()" placeholder="Pesquisar por colaborador, função ou período..." class="w-full pl-9 pr-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-semibold outline-none focus:ring-2 focus:ring-amber-500">
           </div>
-          <span class="text-xs font-bold text-slate-500">Exibindo registros de campo</span>
         </div>
 
         <div class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
@@ -199,7 +245,7 @@
                   <th class="p-3">Colaborador</th>
                   <th class="p-3">Especialidade / Função</th>
                   <th class="p-3">Período / Semana</th>
-                  <th class="p-3 text-center">Pontuação</th>
+                  <th class="p-3 text-center">Pontos Perdidos na Semana</th>
                   <th class="p-3">Avaliador</th>
                   <th class="p-3 text-center w-28">Ações</th>
                 </tr>
@@ -210,33 +256,25 @@
         </div>
       </main>
 
-      <!-- ================= TELA 4: CRITÉRIOS / PERGUNTAS ================= -->
+      <!-- ================= TELA 4: OCORRÊNCIAS ================= -->
       <main id="viewQuestions" class="page-view space-y-6 hidden">
         <div class="flex justify-between items-center border-b border-slate-200 pb-3">
           <div>
-            <h2 class="text-lg font-black text-slate-900 flex items-center gap-2"><i class="fa-solid fa-list-check text-amber-500"></i> Parâmetros, Critérios e Valores</h2>
-            <p class="text-xs text-slate-500">Configure perguntas, pontos de bônus/desconto, médias alvo e valores monetários.</p>
+            <h2 class="text-lg font-black text-slate-900 flex items-center gap-2"><i class="fa-solid fa-list-check text-amber-500"></i> Cadastro de Ocorrências</h2>
+            <p class="text-xs text-slate-500">Configure os motivos de desconto (ex: Faltas, Ferramentas Jogadas) e os pontos por ocorrência.</p>
           </div>
           <button onclick="openQuestionModal()" class="bg-amber-500 hover:bg-amber-600 text-slate-950 font-bold px-4 py-2 rounded-xl text-xs shadow flex items-center gap-2">
-            <i class="fa-solid fa-plus"></i> Novo Critério / Pergunta
+            <i class="fa-solid fa-plus"></i> Nova Ocorrência
           </button>
         </div>
 
         <div class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
-          <div class="p-4 border-b border-slate-100 font-bold text-xs uppercase tracking-wider text-slate-500">
-            Critérios, Pesos e Valores Monetários
-          </div>
           <div class="overflow-x-auto">
             <table class="w-full text-left text-xs">
               <thead class="bg-slate-900 text-white uppercase tracking-wider">
                 <tr>
-                  <th class="p-3">Descrição do Critério</th>
-                  <th class="p-3 text-center">Pontos Bônus (+)</th>
-                  <th class="p-3 text-center">Média Bônus</th>
-                  <th class="p-3 text-center">Valor Bônus ($)</th>
-                  <th class="p-3 text-center">Pontos Desconto (-)</th>
-                  <th class="p-3 text-center">Média Desconto</th>
-                  <th class="p-3 text-center">Valor Desconto ($)</th>
+                  <th class="p-3">Descrição da Ocorrência</th>
+                  <th class="p-3 text-center">Pontos Perdidos por Ocorrência</th>
                   <th class="p-3 text-center w-28">Ações</th>
                 </tr>
               </thead>
@@ -246,15 +284,15 @@
         </div>
       </main>
 
-      <!-- ================= TELA 5: APURAÇÃO ANUAL ================= -->
+      <!-- ================= TELA 5: BÔNUS ================= -->
       <main id="viewApuracao" class="page-view space-y-6 hidden">
         <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 border-b border-slate-200 pb-3 no-print">
           <div>
-            <h2 class="text-lg font-black text-slate-900 flex items-center gap-2"><i class="fa-solid fa-calculator text-emerald-600"></i> Apuração Anual de Performance e Bônus</h2>
-            <p class="text-xs text-slate-500">Métricas por avaliado, médias de cada item e apuração final de bônus/desconto.</p>
+            <h2 class="text-lg font-black text-slate-900 flex items-center gap-2"><i class="fa-solid fa-calculator text-emerald-600"></i> Apuração Final de Bônus</h2>
+            <p class="text-xs text-slate-500">Consolidação de pontos e valores finais em dólares a pagar.</p>
           </div>
           <div class="flex items-center gap-3">
-            <label class="text-xs font-bold text-slate-600">Selecione o Ano:</label>
+            <label class="text-xs font-bold text-slate-600">Ano de Referência:</label>
             <select id="apuracaoYear" onchange="renderApuracao()" class="bg-white border border-slate-300 rounded-xl px-3 py-2 text-xs font-bold text-slate-800 outline-none focus:ring-2 focus:ring-amber-500">
               <option value="2026" selected>2026</option>
               <option value="2025">2025</option>
@@ -270,10 +308,10 @@
           <div class="flex justify-between items-center border-b pb-4">
             <div>
               <h3 class="text-xl font-black text-slate-900">ROBUST CONSTRUCTIONS</h3>
-              <p class="text-xs text-slate-500">Apuração Consolidada de Bonificação & Penalidades</p>
+              <p class="text-xs text-slate-500">Extrato Consolidado de Bônus e Abatimentos</p>
             </div>
             <div class="text-right">
-              <span id="apuracaoYearTitle" class="text-sm font-extrabold text-amber-600 block">Ano de Apuração: 2026</span>
+              <span id="apuracaoYearTitle" class="text-sm font-extrabold text-amber-600 block">Ano: 2026</span>
               <span class="text-[10px] text-slate-400">Emissão: Portal RobustConstructions</span>
             </div>
           </div>
@@ -284,20 +322,18 @@
                 <tr>
                   <th class="p-3 border">Avaliado (Colaborador)</th>
                   <th class="p-3 border">Função</th>
-                  <th class="p-3 text-center border">Pontos Totais</th>
-                  <th class="p-3 text-center border">Média Geral</th>
-                  <th class="p-3 text-center border">Bônus Calculado ($)</th>
-                  <th class="p-3 text-center border">Desconto Aplicado ($)</th>
-                  <th class="p-3 text-center border">Saldo Líquido ($)</th>
+                  <th class="p-3 text-center border">Teto Inicial</th>
+                  <th class="p-3 text-center border">Total Ocorrências</th>
+                  <th class="p-3 text-center border">Pontos Abatidos</th>
+                  <th class="p-3 text-center border">Saldo Final de Pontos</th>
+                  <th class="p-3 text-center border">Valor a Pagar ($)</th>
                 </tr>
               </thead>
               <tbody id="apuracaoTableBody" class="divide-y divide-slate-200"></tbody>
               <tfoot class="bg-slate-100 font-bold">
                 <tr>
-                  <td colspan="4" class="p-3 text-right uppercase border">Totais da Apuração:</td>
-                  <td id="apurTotalBonus" class="p-3 text-center text-emerald-700 border">$0.00</td>
-                  <td id="apurTotalPenalty" class="p-3 text-center text-rose-700 border">$0.00</td>
-                  <td id="apurTotalNet" class="p-3 text-center text-slate-900 font-black border text-sm">$0.00</td>
+                  <td colspan="6" class="p-3 text-right uppercase border">Total Geral a Pagar:</td>
+                  <td id="apurTotalNet" class="p-3 text-center text-emerald-700 font-black border text-sm">$0.00</td>
                 </tr>
               </tfoot>
             </table>
@@ -305,12 +341,40 @@
         </div>
       </main>
 
-      <!-- ================= TELA 6: CADASTRO DE AVALIADOS ================= -->
+      <!-- ================= TELA 6: PARÂMETROS ================= -->
+      <main id="viewConfig" class="page-view space-y-6 hidden">
+        <div class="border-b border-slate-200 pb-3">
+          <h2 class="text-lg font-black text-slate-900 flex items-center gap-2"><i class="fa-solid fa-sliders text-amber-500"></i> Parametrização Global do Sistema</h2>
+          <p class="text-xs text-slate-500">Configure o teto inicial de pontos e o valor de conversão em dólares.</p>
+        </div>
+
+        <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm max-w-xl space-y-4">
+          <div>
+            <label class="block text-xs font-bold uppercase text-slate-600 mb-1">Pontuação Inicial Máxima (Teto por Avaliado)</label>
+            <input type="number" id="cfgInitialPoints" value="500" class="w-full bg-slate-50 border border-slate-300 rounded-xl p-3 text-sm font-bold text-slate-800 outline-none focus:ring-2 focus:ring-amber-500">
+            <p class="text-[10px] text-slate-400 mt-1">Exemplo: 500 pontos iniciais por ano.</p>
+          </div>
+
+          <div>
+            <label class="block text-xs font-bold uppercase text-slate-600 mb-1">Valor de Conversão em Dólares ($) por 1 Ponto</label>
+            <input type="number" step="0.01" id="cfgPointValue" value="1.00" class="w-full bg-slate-50 border border-slate-300 rounded-xl p-3 text-sm font-bold text-emerald-600 outline-none focus:ring-2 focus:ring-amber-500">
+            <p class="text-[10px] text-slate-400 mt-1">Exemplo: 1.00 significa que 1 ponto = US$ 1,00.</p>
+          </div>
+
+          <div class="pt-3 border-t flex justify-end">
+            <button onclick="saveGlobalConfig()" class="bg-amber-500 hover:bg-amber-600 text-slate-950 font-black px-6 py-2.5 rounded-xl text-xs shadow flex items-center gap-2">
+              <i class="fa-solid fa-floppy-disk"></i> Salvar Parâmetros
+            </button>
+          </div>
+        </div>
+      </main>
+
+      <!-- ================= TELA 7: AVALIADOS ================= -->
       <main id="viewWorkers" class="page-view space-y-6 hidden">
         <div class="flex justify-between items-center border-b border-slate-200 pb-3">
           <div>
             <h2 class="text-lg font-black text-slate-900 flex items-center gap-2"><i class="fa-solid fa-users text-amber-500"></i> Gestão de Avaliados</h2>
-            <p class="text-xs text-slate-500">Cadastre a equipe de campo para o acumulado de pontos no ranking.</p>
+            <p class="text-xs text-slate-500">Cadastre os colaboradores de campo.</p>
           </div>
           <button onclick="openWorkerModal()" class="bg-amber-500 hover:bg-amber-600 text-slate-950 font-bold px-4 py-2 rounded-xl text-xs shadow flex items-center gap-2">
             <i class="fa-solid fa-user-plus"></i> Novo Avaliado
@@ -325,7 +389,6 @@
                 <tr>
                   <th class="p-3">Nome do Avaliado</th>
                   <th class="p-3">Especialidade / Função</th>
-                  <th class="p-3 text-center">Pontuação Acumulada</th>
                   <th class="p-3 text-center w-28">Ações</th>
                 </tr>
               </thead>
@@ -338,11 +401,11 @@
     </div>
   </div>
 
-  <!-- MODAL DE FORMULÁRIO DE AVALIAÇÃO SEMANAL -->
+  <!-- MODAL DE LANÇAMENTO SEMANAL -->
   <div id="evalModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm hidden flex items-center justify-center p-4 z-50 overflow-y-auto">
     <div class="bg-white rounded-2xl shadow-xl border border-slate-200 max-w-3xl w-full p-6 space-y-4 my-8">
       <div class="flex justify-between items-center border-b pb-3">
-        <h3 class="font-black text-slate-900 text-sm flex items-center gap-2"><i class="fa-solid fa-clipboard-list text-amber-500"></i> Formulário de Avaliação Semanal</h3>
+        <h3 class="font-black text-slate-900 text-sm flex items-center gap-2"><i class="fa-solid fa-clipboard-list text-amber-500"></i> Formulario de Lançamento de Ocorrências</h3>
         <button onclick="closeEvalModal()" class="text-slate-400 hover:text-slate-600"><i class="fa-solid fa-xmark text-lg"></i></button>
       </div>
 
@@ -368,14 +431,15 @@
       </div>
 
       <div class="space-y-2 pt-2">
-        <h4 class="text-xs font-bold uppercase text-slate-500 tracking-wider">Checklist de Itens</h4>
+        <h4 class="text-xs font-bold uppercase text-slate-500 tracking-wider">Informe a Quantidade de Vezes que Cada Ocorrência Aconteceu na Semana</h4>
         <div class="overflow-x-auto border rounded-xl bg-white max-h-60 overflow-y-auto">
           <table class="w-full text-left text-xs">
             <thead class="bg-slate-900 text-white uppercase">
               <tr>
-                <th class="p-2.5">Item / Critério</th>
-                <th class="p-2.5 text-center w-52">Avaliação</th>
-                <th class="p-2.5 text-center w-28">Pontos</th>
+                <th class="p-2.5">Ocorrência</th>
+                <th class="p-2.5 text-center w-36">Pontos Unitários</th>
+                <th class="p-2.5 text-center w-40">Qtd. de Vezes (Semana)</th>
+                <th class="p-2.5 text-center w-32">Total Perdedor</th>
               </tr>
             </thead>
             <tbody id="dynamicQuestionsTableBody" class="divide-y divide-slate-100"></tbody>
@@ -384,8 +448,8 @@
       </div>
 
       <div class="bg-slate-900 text-white p-4 rounded-xl flex justify-between items-center">
-        <span class="text-xs font-bold uppercase text-slate-400">Pontuação Total:</span>
-        <span id="evalTotalScore" class="text-2xl font-black text-amber-400">0 pts</span>
+        <span class="text-xs font-bold uppercase text-slate-400">Total de Pontos Descontados na Semana:</span>
+        <span id="evalTotalScore" class="text-2xl font-black text-rose-400">0 pts</span>
       </div>
 
       <div class="flex justify-end gap-2 pt-2 border-t">
@@ -395,50 +459,26 @@
     </div>
   </div>
 
-  <!-- MODAIS CADASTRO PERGUNTA E TRABALHADOR -->
+  <!-- MODAL OCORRÊNCIA E TRABALHADOR -->
   <div id="questionModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm hidden flex items-center justify-center p-4 z-50">
-    <div class="bg-white rounded-2xl shadow-xl border border-slate-200 max-w-lg w-full p-6 space-y-4">
+    <div class="bg-white rounded-2xl shadow-xl border border-slate-200 max-w-md w-full p-6 space-y-4">
       <div class="flex justify-between items-center border-b pb-3">
-        <h3 class="font-black text-slate-900 text-sm flex items-center gap-2"><i class="fa-solid fa-list-check text-amber-500"></i> Critério, Pesos e Valores</h3>
+        <h3 class="font-black text-slate-900 text-sm flex items-center gap-2"><i class="fa-solid fa-list-check text-amber-500"></i> Nova Ocorrência</h3>
         <button onclick="closeQuestionModal()" class="text-slate-400 hover:text-slate-600"><i class="fa-solid fa-xmark text-lg"></i></button>
       </div>
       <div class="space-y-3">
         <div>
-          <label class="block text-[11px] font-bold uppercase text-slate-500 mb-1">Descrição do Critério</label>
-          <input type="text" id="qModalText" placeholder="Ex: Cumprimento do uso dos EPIs" class="w-full bg-slate-50 border rounded-xl p-2.5 text-xs font-semibold">
+          <label class="block text-[11px] font-bold uppercase text-slate-500 mb-1">Descrição da Ocorrência / Falta</label>
+          <input type="text" id="qModalText" placeholder="Ex: Faltou sem justificativa" class="w-full bg-slate-50 border rounded-xl p-2.5 text-xs font-semibold">
         </div>
-        <div class="grid grid-cols-3 gap-3">
-          <div>
-            <label class="block text-[11px] font-bold uppercase text-slate-500 mb-1">Pontos Bônus (+)</label>
-            <input type="number" id="qModalBonus" value="10" class="w-full bg-slate-50 border rounded-xl p-2 text-xs font-bold text-emerald-600">
-          </div>
-          <div>
-            <label class="block text-[11px] font-bold uppercase text-slate-500 mb-1">Média Bônus Alvo</label>
-            <input type="number" step="0.1" id="qModalTargetBonus" value="8.0" class="w-full bg-slate-50 border rounded-xl p-2 text-xs font-bold">
-          </div>
-          <div>
-            <label class="block text-[11px] font-bold uppercase text-slate-500 mb-1">Valor Bônus ($)</label>
-            <input type="number" id="qModalBonusValue" value="50" class="w-full bg-slate-50 border rounded-xl p-2 text-xs font-bold text-emerald-600">
-          </div>
-        </div>
-        <div class="grid grid-cols-3 gap-3">
-          <div>
-            <label class="block text-[11px] font-bold uppercase text-slate-500 mb-1">Pontos Desconto (-)</label>
-            <input type="number" id="qModalPenalty" value="5" class="w-full bg-slate-50 border rounded-xl p-2 text-xs font-bold text-rose-600">
-          </div>
-          <div>
-            <label class="block text-[11px] font-bold uppercase text-slate-500 mb-1">Média Desconto Alvo</label>
-            <input type="number" step="0.1" id="qModalTargetPenalty" value="4.0" class="w-full bg-slate-50 border rounded-xl p-2 text-xs font-bold">
-          </div>
-          <div>
-            <label class="block text-[11px] font-bold uppercase text-slate-500 mb-1">Valor Desconto ($)</label>
-            <input type="number" id="qModalPenaltyValue" value="20" class="w-full bg-slate-50 border rounded-xl p-2 text-xs font-bold text-rose-600">
-          </div>
+        <div>
+          <label class="block text-[11px] font-bold uppercase text-slate-500 mb-1">Pontos Perdidos por Ocorrência</label>
+          <input type="number" id="qModalPenalty" value="50" class="w-full bg-slate-50 border rounded-xl p-2.5 text-xs font-bold text-rose-600">
         </div>
       </div>
       <div class="flex justify-end gap-2 pt-3 border-t">
         <button onclick="closeQuestionModal()" class="px-4 py-2 rounded-xl text-xs font-bold bg-slate-100 text-slate-600">Cancelar</button>
-        <button onclick="saveQuestion()" class="px-5 py-2 rounded-xl text-xs font-bold bg-amber-500 text-slate-950 shadow">Salvar Parâmetros</button>
+        <button onclick="saveQuestion()" class="px-5 py-2 rounded-xl text-xs font-bold bg-amber-500 text-slate-950 shadow">Salvar Ocorrência</button>
       </div>
     </div>
   </div>
@@ -476,7 +516,9 @@
     let editingQuestionId = null;
     let editingWorkerId = null;
     let chartInstance = null;
+    let occurrencesChartInstance = null;
 
+    let GLOBAL_CONFIG = { initialPoints: 500, pointValue: 1.00 };
     let QUESTIONS = [];
     let WORKERS = [];
     let EVALUATIONS = [];
@@ -516,6 +558,12 @@
     }
 
     async function fetchAllFromSupabase() {
+      const { data: gData } = await db.from('parametros_globais').select('*').eq('id', 1).single();
+      if (gData) {
+        GLOBAL_CONFIG.initialPoints = parseFloat(gData.initial_points || 500);
+        GLOBAL_CONFIG.pointValue = parseFloat(gData.point_value || 1.00);
+      }
+
       const { data: qData } = await db.from('perguntas_ranking').select('*').order('created_at');
       if (qData) QUESTIONS = qData;
 
@@ -537,6 +585,7 @@
       renderQuestionsTable();
       renderWorkersTable();
       renderApuracao();
+      renderConfigFields();
     }
 
     function navTo(view) {
@@ -545,6 +594,7 @@
       document.getElementById("viewQuestions").classList.add("hidden");
       document.getElementById("viewWorkers").classList.add("hidden");
       document.getElementById("viewApuracao").classList.add("hidden");
+      document.getElementById("viewConfig").classList.add("hidden");
 
       if (view === 'dashboard') {
         document.getElementById("viewDashboard").classList.remove("hidden");
@@ -561,6 +611,9 @@
       } else if (view === 'apuracao') {
         document.getElementById("viewApuracao").classList.remove("hidden");
         renderApuracao();
+      } else if (view === 'config') {
+        document.getElementById("viewConfig").classList.remove("hidden");
+        renderConfigFields();
       }
     }
 
@@ -590,39 +643,74 @@
       document.getElementById("evalPeriodDates").value = `${formatDate(start)} à ${formatDate(end)}`;
     }
 
-    // DASHBOARD
+    // DASHBOARD GERENCIAL
     function renderDashboard() {
-      const summary = {};
-      EVALUATIONS.forEach(e => {
-        if (!summary[e.worker_name]) summary[e.worker_name] = { totalScore: 0, count: 0 };
-        summary[e.worker_name].totalScore += e.totalScore;
-        summary[e.worker_name].count++;
+      document.getElementById("dashInitialPointsCard").innerText = `${GLOBAL_CONFIG.initialPoints} pts`;
+
+      let totalPenaltyAll = 0;
+      const workerSummary = {};
+      const occurrenceCounts = {};
+
+      WORKERS.forEach(w => {
+        workerSummary[w.name] = { name: w.name, totalPenalty: 0 };
       });
 
-      const rankingList = Object.entries(summary).sort((a, b) => b[1].totalScore - a[1].totalScore);
+      EVALUATIONS.forEach(e => {
+        totalPenaltyAll += e.totalScore;
+        if (workerSummary[e.worker_name]) {
+          workerSummary[e.worker_name].totalPenalty += e.totalScore;
+        }
+
+        if (e.answers && Array.isArray(e.answers)) {
+          e.answers.forEach(a => {
+            if (a.count > 0) {
+              occurrenceCounts[a.question] = (occurrenceCounts[a.question] || 0) + a.count;
+            }
+          });
+        }
+      });
 
       document.getElementById("dashTotalCount").innerText = EVALUATIONS.length;
-      if (rankingList.length > 0) {
-        document.getElementById("dashTopWorker").innerText = rankingList[0][0];
-        document.getElementById("dashTopScore").innerText = `${rankingList[0][1].totalScore} pts`;
+      document.getElementById("dashTotalPenalty").innerText = `${totalPenaltyAll} pts`;
+
+      // CÁLCULO DE PRESERVAÇÃO (LÍDER E ATENÇÃO)
+      const workerList = Object.values(workerSummary).map(w => ({
+        name: w.name,
+        remainingPts: Math.max(0, GLOBAL_CONFIG.initialPoints - w.totalPenalty)
+      })).sort((a, b) => b.remainingPts - a.remainingPts);
+
+      if (workerList.length > 0) {
+        document.getElementById("dashBestWorker").innerText = workerList[0].name;
+        document.getElementById("dashBestWorkerPts").innerText = `${workerList[0].remainingPts} pts mantidos`;
+
+        const worst = workerList[workerList.length - 1];
+        document.getElementById("dashWorstWorker").innerText = worst.name;
+        document.getElementById("dashWorstWorkerPts").innerText = `${worst.remainingPts} pts mantidos`;
       }
 
-      let projBonus = 0;
-      rankingList.forEach(item => {
-        const avg = item[1].totalScore / item[1].count;
-        if (avg >= 8.0) projBonus += 50.00;
+      // TAXA DE RETENÇÃO GLOBAL DE BÔNUS
+      const maxPossibleBonusUSD = WORKERS.length * GLOBAL_CONFIG.initialPoints * GLOBAL_CONFIG.pointValue;
+      let totalBonusUSD = 0;
+      workerList.forEach(w => {
+        totalBonusUSD += (w.remainingPts * GLOBAL_CONFIG.pointValue);
       });
-      document.getElementById("dashTotalBonusToPay").innerText = `$${projBonus.toFixed(2)}`;
 
-      renderChart(rankingList);
+      document.getElementById("dashTotalBonusToPay").innerText = `$${totalBonusUSD.toFixed(2)}`;
+
+      const retentionRate = maxPossibleBonusUSD > 0 ? ((totalBonusUSD / maxPossibleBonusUSD) * 100) : 100;
+      document.getElementById("dashRetentionRate").innerText = `${retentionRate.toFixed(1)}%`;
+
+      renderChart(workerSummary);
+      renderOccurrencesChart(occurrenceCounts);
     }
 
-    function renderChart(rankingList) {
+    // GRÁFICO 1: PONTOS RESTANTES
+    function renderChart(workerSummary) {
       const ctx = document.getElementById('rankingChart');
       if (!ctx) return;
 
-      const labels = rankingList.map(item => item[0]);
-      const scores = rankingList.map(item => item[1].totalScore);
+      const labels = Object.keys(workerSummary);
+      const remainingData = Object.values(workerSummary).map(w => Math.max(0, GLOBAL_CONFIG.initialPoints - w.totalPenalty));
 
       if (chartInstance) chartInstance.destroy();
 
@@ -631,9 +719,9 @@
         data: {
           labels: labels,
           datasets: [{
-            label: 'Pontuação Total Acumulada',
-            data: scores,
-            backgroundColor: '#f59e0b',
+            label: 'Saldo de Pontos Restantes',
+            data: remainingData,
+            backgroundColor: '#10b981',
             borderRadius: 8
           }]
         },
@@ -641,12 +729,47 @@
           responsive: true,
           maintainAspectRatio: false,
           plugins: { legend: { display: false } },
-          scales: { y: { beginAtZero: true }, x: { grid: { display: false } } }
+          scales: { y: { beginAtZero: true, max: GLOBAL_CONFIG.initialPoints }, x: { grid: { display: false } } }
         }
       });
     }
 
-    // AVALIAÇÃO SEMANAL
+    // GRÁFICO 2: TOP OCORRÊNCIAS
+    function renderOccurrencesChart(occurrenceCounts) {
+      const ctx = document.getElementById('occurrencesChart');
+      if (!ctx) return;
+
+      const sortedOccurrences = Object.entries(occurrenceCounts)
+        .sort((a, b) => b[1] - a[1])
+        .slice(0, 5); // Top 5
+
+      const labels = sortedOccurrences.map(item => item[0]);
+      const counts = sortedOccurrences.map(item => item[1]);
+
+      if (occurrencesChartInstance) occurrencesChartInstance.destroy();
+
+      occurrencesChartInstance = new Chart(ctx, {
+        type: 'bar',
+        data: {
+          labels: labels.length > 0 ? labels : ['Sem ocorrências'],
+          datasets: [{
+            label: 'Quantidade de Ocorrências',
+            data: counts.length > 0 ? counts : [0],
+            backgroundColor: '#f43f5e',
+            borderRadius: 8
+          }]
+        },
+        options: {
+          indexAxis: 'y', // Barra horizontal para facilitar a leitura de frases longas
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: { legend: { display: false } },
+          scales: { x: { beginAtZero: true, ticks: { precision: 0 } }, y: { grid: { display: false } } }
+        }
+      });
+    }
+
+    // LANÇAMENTOS
     function renderEvaluationsGrid() {
       const tbody = document.getElementById("evalGridBody");
       const query = document.getElementById("evalSearchQuery").value.toLowerCase();
@@ -659,7 +782,7 @@
       );
 
       if (filtered.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="6" class="p-6 text-center text-slate-400">Nenhuma avaliação encontrada.</td></tr>`;
+        tbody.innerHTML = `<tr><td colspan="6" class="p-6 text-center text-slate-400">Nenhum lançamento encontrado.</td></tr>`;
         return;
       }
 
@@ -670,7 +793,7 @@
           <td class="p-3 font-bold text-slate-800">${item.worker_name}</td>
           <td class="p-3 text-slate-600">${item.role}</td>
           <td class="p-3 font-semibold text-slate-700">${item.period_dates}</td>
-          <td class="p-3 text-center font-black text-amber-600 text-sm">${item.totalScore} pts</td>
+          <td class="p-3 text-center font-black text-rose-600 text-sm">-${item.totalScore} pts</td>
           <td class="p-3 text-slate-600">${item.evaluator || '-'}</td>
           <td class="p-3 text-center">
             <div class="flex justify-center gap-1">
@@ -710,7 +833,7 @@
     }
 
     async function deleteEvaluation(id) {
-      if (confirm("Excluir esta avaliação semanal do banco de dados?")) {
+      if (confirm("Excluir este lançamento de ocorrência?")) {
         await db.from('avaliacoes_ranking').delete().eq('id', id);
         await fetchAllFromSupabase();
       }
@@ -721,21 +844,20 @@
       tbody.innerHTML = "";
 
       QUESTIONS.forEach((q, idx) => {
-        let savedVal = "NA";
-        if (savedAnswers && savedAnswers[idx]) savedVal = savedAnswers[idx].status;
+        let savedQty = 0;
+        if (savedAnswers && savedAnswers[idx]) savedQty = savedAnswers[idx].count || 0;
+
+        const penaltyPts = parseFloat(q.penalty_points || q.points_per_occurrence || 0);
 
         const tr = document.createElement("tr");
         tr.className = "hover:bg-slate-50 border-b border-slate-100";
         tr.innerHTML = `
           <td class="p-2.5 font-bold text-slate-800">${q.question_text}</td>
+          <td class="p-2.5 text-center font-bold text-rose-600">-${penaltyPts} pts</td>
           <td class="p-2.5 text-center">
-            <select data-idx="${idx}" data-bonus="${q.bonus_points}" data-penalty="${q.penalty_points}" onchange="calculateTotalScore()" class="q-select bg-slate-50 border border-slate-300 rounded-lg p-1.5 font-bold text-xs text-center outline-none">
-              <option value="BONUS" ${savedVal === 'BONUS' ? 'selected' : ''}>🟢 Bônus (+${q.bonus_points} pts)</option>
-              <option value="PENALTY" ${savedVal === 'PENALTY' ? 'selected' : ''}>🔴 Desconto (-${q.penalty_points} pts)</option>
-              <option value="NA" ${savedVal === 'NA' ? 'selected' : ''}>⚪ Não se Aplica (0 pts)</option>
-            </select>
+            <input type="number" min="0" value="${savedQty}" data-idx="${idx}" data-unit="${penaltyPts}" oninput="calculateTotalScore()" class="q-count-input w-24 bg-slate-50 border border-slate-300 rounded-lg p-1.5 font-bold text-xs text-center outline-none focus:ring-2 focus:ring-amber-500">
           </td>
-          <td class="p-2.5 text-center font-black text-amber-600 q-score-display">0 pts</td>
+          <td class="p-2.5 text-center font-black text-rose-600 q-score-display">0 pts</td>
         `;
         tbody.appendChild(tr);
       });
@@ -744,29 +866,19 @@
     }
 
     function calculateTotalScore() {
-      let total = 0;
-      document.querySelectorAll(".q-select").forEach(sel => {
-        const val = sel.value;
-        const b = parseFloat(sel.getAttribute("data-bonus"));
-        const p = parseFloat(sel.getAttribute("data-penalty"));
-        const tr = sel.closest("tr");
-        const display = tr.querySelector(".q-score-display");
+      let totalPenalty = 0;
+      document.querySelectorAll(".q-count-input").forEach(input => {
+        const qty = parseInt(input.value) || 0;
+        const unitPts = parseFloat(input.getAttribute("data-unit")) || 0;
+        const itemTotal = qty * unitPts;
+        totalPenalty += itemTotal;
 
-        if (val === 'BONUS') {
-          total += b;
-          display.innerText = `+${b} pts`;
-          display.className = "p-2.5 text-center font-black text-emerald-600 q-score-display";
-        } else if (val === 'PENALTY') {
-          total -= p;
-          display.innerText = `-${p} pts`;
-          display.className = "p-2.5 text-center font-black text-rose-600 q-score-display";
-        } else {
-          display.innerText = `0 pts`;
-          display.className = "p-2.5 text-center font-bold text-slate-400 q-score-display";
-        }
+        const tr = input.closest("tr");
+        const display = tr.querySelector(".q-score-display");
+        display.innerText = itemTotal > 0 ? `-${itemTotal} pts` : `0 pts`;
       });
 
-      document.getElementById("evalTotalScore").innerText = `${total} pts`;
+      document.getElementById("evalTotalScore").innerText = `-${totalPenalty} pts`;
     }
 
     async function saveCurrentEvaluation() {
@@ -774,13 +886,17 @@
       const role = document.getElementById("evalRole").value;
       const period_dates = document.getElementById("evalPeriodDates").value;
       const evaluator = document.getElementById("evalEvaluator").value;
-      const total_score = parseFloat(document.getElementById("evalTotalScore").innerText.replace(" pts", "")) || 0;
+      const total_score = parseFloat(document.getElementById("evalTotalScore").innerText.replace("-", "").replace(" pts", "")) || 0;
 
       if (!worker_name) return alert("Selecione um colaborador!");
 
       const answers = [];
-      document.querySelectorAll(".q-select").forEach((sel, idx) => {
-        answers.push({ question: QUESTIONS[idx].question_text, status: sel.value });
+      document.querySelectorAll(".q-count-input").forEach((input, idx) => {
+        answers.push({
+          question: QUESTIONS[idx].question_text,
+          count: parseInt(input.value) || 0,
+          unitPoints: parseFloat(input.getAttribute("data-unit")) || 0
+        });
       });
 
       const record = { worker_name, role, period_dates, evaluator, total_score, answers };
@@ -795,22 +911,19 @@
       await fetchAllFromSupabase();
     }
 
-    // CRITÉRIOS / PERGUNTAS
+    // OCORRÊNCIAS
     function renderQuestionsTable() {
       const tbody = document.getElementById("questionsTableBody");
       tbody.innerHTML = "";
 
       QUESTIONS.forEach(q => {
+        const penaltyPts = parseFloat(q.penalty_points || q.points_per_occurrence || 0);
+
         const tr = document.createElement("tr");
         tr.className = "hover:bg-slate-50 border-b border-slate-100";
         tr.innerHTML = `
           <td class="p-3 font-bold text-slate-800">${q.question_text}</td>
-          <td class="p-3 text-center font-bold text-emerald-600">+${q.bonus_points} pts</td>
-          <td class="p-3 text-center font-bold text-slate-700">${q.target_avg_bonus || 0} pts</td>
-          <td class="p-3 text-center font-bold text-emerald-600">$${(q.bonus_value || 0).toFixed(2)}</td>
-          <td class="p-3 text-center font-bold text-rose-600">-${q.penalty_points} pts</td>
-          <td class="p-3 text-center font-bold text-slate-700">${q.target_avg_penalty || 0} pts</td>
-          <td class="p-3 text-center font-bold text-rose-600">$${(q.penalty_value || 0).toFixed(2)}</td>
+          <td class="p-3 text-center font-bold text-rose-600">-${penaltyPts} pts</td>
           <td class="p-3 text-center">
             <div class="flex justify-center gap-1">
               <button onclick="editQuestion('${q.id}')" title="Editar" class="p-1.5 bg-slate-100 hover:bg-amber-500 hover:text-slate-950 text-slate-600 rounded-lg"><i class="fa-solid fa-pen"></i></button>
@@ -825,12 +938,7 @@
     function openQuestionModal() {
       editingQuestionId = null;
       document.getElementById("qModalText").value = "";
-      document.getElementById("qModalBonus").value = 10;
-      document.getElementById("qModalTargetBonus").value = 8.0;
-      document.getElementById("qModalBonusValue").value = 50;
-      document.getElementById("qModalPenalty").value = 5;
-      document.getElementById("qModalTargetPenalty").value = 4.0;
-      document.getElementById("qModalPenaltyValue").value = 20;
+      document.getElementById("qModalPenalty").value = 50;
       document.getElementById("questionModal").classList.remove("hidden");
     }
 
@@ -843,28 +951,17 @@
       if (!q) return;
       editingQuestionId = id;
       document.getElementById("qModalText").value = q.question_text;
-      document.getElementById("qModalBonus").value = q.bonus_points;
-      document.getElementById("qModalTargetBonus").value = q.target_avg_bonus || 8.0;
-      document.getElementById("qModalBonusValue").value = q.bonus_value || 50;
-      document.getElementById("qModalPenalty").value = q.penalty_points;
-      document.getElementById("qModalTargetPenalty").value = q.target_avg_penalty || 4.0;
-      document.getElementById("qModalPenaltyValue").value = q.penalty_value || 20;
+      document.getElementById("qModalPenalty").value = q.penalty_points || q.points_per_occurrence || 50;
       document.getElementById("questionModal").classList.remove("hidden");
     }
 
     async function saveQuestion() {
       const question_text = document.getElementById("qModalText").value;
-      const bonus_points = parseFloat(document.getElementById("qModalBonus").value) || 0;
-      const target_avg_bonus = parseFloat(document.getElementById("qModalTargetBonus").value) || 0;
-      const bonus_value = parseFloat(document.getElementById("qModalBonusValue").value) || 0;
-
       const penalty_points = parseFloat(document.getElementById("qModalPenalty").value) || 0;
-      const target_avg_penalty = parseFloat(document.getElementById("qModalTargetPenalty").value) || 0;
-      const penalty_value = parseFloat(document.getElementById("qModalPenaltyValue").value) || 0;
 
       if (!question_text) return alert("Preencha a descrição!");
 
-      const record = { question_text, bonus_points, target_avg_bonus, bonus_value, penalty_points, target_avg_penalty, penalty_value };
+      const record = { question_text, penalty_points, points_per_occurrence: penalty_points };
 
       if (editingQuestionId) {
         await db.from('perguntas_ranking').update(record).eq('id', editingQuestionId);
@@ -877,115 +974,94 @@
     }
 
     async function deleteQuestion(id) {
-      if (confirm("Excluir este critério?")) {
+      if (confirm("Excluir esta ocorrência?")) {
         await db.from('perguntas_ranking').delete().eq('id', id);
         await fetchAllFromSupabase();
       }
     }
 
-    // APURAÇÃO ANUAL DINÂMICA
+    // BÔNUS
     function renderApuracao() {
       const selectedYear = document.getElementById("apuracaoYear").value;
-      document.getElementById("apuracaoYearTitle").innerText = `Ano de Apuração: ${selectedYear}`;
+      document.getElementById("apuracaoYearTitle").innerText = `Ano: ${selectedYear}`;
 
       const tbody = document.getElementById("apuracaoTableBody");
       tbody.innerHTML = "";
 
       const yearEvals = EVALUATIONS.filter(e => e.createdAt && String(e.createdAt.getFullYear()) === selectedYear);
 
-      const summary = {};
-      yearEvals.forEach(e => {
-        if (!summary[e.worker_name]) {
-          summary[e.worker_name] = { name: e.worker_name, role: e.role, scores: [], evals: [] };
-        }
-        summary[e.worker_name].scores.push(e.totalScore);
-        summary[e.worker_name].evals.push(e);
+      const workerMap = {};
+      WORKERS.forEach(w => {
+        workerMap[w.name] = { name: w.name, role: w.role, totalPenalty: 0, occurrencesCount: 0 };
       });
 
-      let totBonus = 0, totPen = 0, totNet = 0;
+      yearEvals.forEach(e => {
+        if (!workerMap[e.worker_name]) {
+          workerMap[e.worker_name] = { name: e.worker_name, role: e.role, totalPenalty: 0, occurrencesCount: 0 };
+        }
+        workerMap[e.worker_name].totalPenalty += e.totalScore;
+        
+        if (e.answers && Array.isArray(e.answers)) {
+          e.answers.forEach(a => { workerMap[e.worker_name].occurrencesCount += (a.count || 0); });
+        }
+      });
 
-      const list = Object.values(summary);
+      let totalUSDAll = 0;
+      const list = Object.values(workerMap);
+
       if (list.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="7" class="p-6 text-center text-slate-400 border">Nenhuma avaliação encontrada para o ano de ${selectedYear}.</td></tr>`;
+        tbody.innerHTML = `<tr><td colspan="7" class="p-6 text-center text-slate-400 border">Nenhum avaliado cadastrado.</td></tr>`;
       } else {
         list.forEach(item => {
-          const totalPoints = item.scores.reduce((a, b) => a + b, 0);
-          const avgScore = totalPoints / item.scores.length;
-
-          let calcBonus = 0;
-          let calcPenalty = 0;
-
-          QUESTIONS.forEach(q => {
-            let qPointsSum = 0;
-            let qCount = 0;
-
-            item.evals.forEach(ev => {
-              if (ev.answers && Array.isArray(ev.answers)) {
-                const ans = ev.answers.find(a => a.question === q.question_text);
-                if (ans) {
-                  if (ans.status === 'BONUS') {
-                    qPointsSum += parseFloat(q.bonus_points || 0);
-                    qCount++;
-                  } else if (ans.status === 'PENALTY') {
-                    qPointsSum -= parseFloat(q.penalty_points || 0);
-                    qCount++;
-                  }
-                }
-              }
-            });
-
-            const qAvg = qCount > 0 ? (qPointsSum / qCount) : 0;
-
-            if (qCount > 0 && qAvg >= parseFloat(q.target_avg_bonus || 0) && parseFloat(q.target_avg_bonus) > 0) {
-              calcBonus += parseFloat(q.bonus_value || 0);
-            }
-            
-            if (qCount > 0 && (qAvg <= parseFloat(q.target_avg_penalty || 0) || qPointsSum < 0)) {
-              calcPenalty += parseFloat(q.penalty_value || 0);
-            }
-          });
-
-          let net = calcBonus - calcPenalty;
-
-          totBonus += calcBonus;
-          totPen += calcPenalty;
-          totNet += net;
+          const remainingPoints = Math.max(0, GLOBAL_CONFIG.initialPoints - item.totalPenalty);
+          const finalUSD = remainingPoints * GLOBAL_CONFIG.pointValue;
+          totalUSDAll += finalUSD;
 
           const tr = document.createElement("tr");
           tr.className = "border-b border-slate-200";
           tr.innerHTML = `
             <td class="p-3 font-bold text-slate-800 border">${item.name}</td>
             <td class="p-3 text-slate-600 border">${item.role}</td>
-            <td class="p-3 text-center font-bold text-slate-800 border">${totalPoints} pts</td>
-            <td class="p-3 text-center font-bold text-amber-600 border">${avgScore.toFixed(2).replace(".", ",")}</td>
-            <td class="p-3 text-center font-bold text-emerald-600 border">$${calcBonus.toFixed(2)}</td>
-            <td class="p-3 text-center font-bold text-rose-600 border">$${calcPenalty.toFixed(2)}</td>
-            <td class="p-3 text-center font-black text-slate-900 border">$${net.toFixed(2)}</td>
+            <td class="p-3 text-center font-bold text-slate-700 border">${GLOBAL_CONFIG.initialPoints} pts</td>
+            <td class="p-3 text-center font-bold text-slate-800 border">${item.occurrencesCount}</td>
+            <td class="p-3 text-center font-bold text-rose-600 border">-${item.totalPenalty} pts</td>
+            <td class="p-3 text-center font-black text-amber-600 border">${remainingPoints} pts</td>
+            <td class="p-3 text-center font-black text-emerald-600 border text-sm">$${finalUSD.toFixed(2)}</td>
           `;
           tbody.appendChild(tr);
         });
       }
 
-      document.getElementById("apurTotalBonus").innerText = `$${totBonus.toFixed(2)}`;
-      document.getElementById("apurTotalPenalty").innerText = `$${totPen.toFixed(2)}`;
-      document.getElementById("apurTotalNet").innerText = `$${totNet.toFixed(2)}`;
+      document.getElementById("apurTotalNet").innerText = `$${totalUSDAll.toFixed(2)}`;
     }
 
-    // CADASTRO DE COLABORADORES
+    // PARÂMETROS
+    function renderConfigFields() {
+      document.getElementById("cfgInitialPoints").value = GLOBAL_CONFIG.initialPoints;
+      document.getElementById("cfgPointValue").value = GLOBAL_CONFIG.pointValue;
+    }
+
+    async function saveGlobalConfig() {
+      const initial_points = parseFloat(document.getElementById("cfgInitialPoints").value) || 500;
+      const point_value = parseFloat(document.getElementById("cfgPointValue").value) || 1.00;
+
+      await db.from('parametros_globais').upsert([{ id: 1, initial_points, point_value }]);
+      alert("Parâmetros globais salvos no Supabase!");
+      await fetchAllFromSupabase();
+      navTo('dashboard');
+    }
+
+    // AVALIADOS
     function renderWorkersTable() {
       const tbody = document.getElementById("workersTableBody");
       tbody.innerHTML = "";
 
       WORKERS.forEach(w => {
-        const workerEvals = EVALUATIONS.filter(e => e.worker_name.toLowerCase() === w.name.toLowerCase());
-        const total = workerEvals.reduce((acc, curr) => acc + curr.totalScore, 0);
-
         const tr = document.createElement("tr");
         tr.className = "hover:bg-slate-50 border-b border-slate-100";
         tr.innerHTML = `
           <td class="p-3 font-bold text-slate-800">${w.name}</td>
           <td class="p-3 text-slate-600">${w.role}</td>
-          <td class="p-3 text-center font-black text-amber-600 text-sm">${total} pts</td>
           <td class="p-3 text-center">
             <div class="flex justify-center gap-1">
               <button onclick="editWorker('${w.id}')" title="Editar" class="p-1.5 bg-slate-100 hover:bg-amber-500 hover:text-slate-950 text-slate-600 rounded-lg"><i class="fa-solid fa-pen"></i></button>
