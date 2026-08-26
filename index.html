@@ -59,6 +59,82 @@
     /* Copilot: visibility is controlled by Supabase Auth */
     #aiCopilotWidget[style*="display:none"] { pointer-events: none; }
 
+  
+    /* ============================================================
+       v3.11 — COPILOT MOBILE / AUTHENTICATED UI
+       - Launcher no canto inferior esquerdo.
+       - Painel alinhado pela esquerda, sem sair da viewport.
+       - Safe-area para iPhone.
+       ============================================================ */
+    #aiCopilotWidget {
+      left: max(12px, env(safe-area-inset-left));
+      right: auto !important;
+      bottom: max(12px, env(safe-area-inset-bottom));
+    }
+
+    #copilotChatBox {
+      width: min(380px, calc(100vw - 24px)) !important;
+      max-width: calc(100vw - 24px);
+      max-height: min(78vh, 680px);
+    }
+
+    @media (max-width: 640px) {
+      #aiCopilotWidget {
+        left: max(12px, env(safe-area-inset-left));
+        right: auto !important;
+      }
+      #copilotChatBox {
+        width: calc(100vw - 24px) !important;
+        max-width: calc(100vw - 24px);
+        max-height: 78vh;
+      }
+    }
+
+  
+    /* ============================================================
+       v3.11 — AUTH GATE DO COPILOT
+       O widget permanece invisível por CSS até existir sessão.
+       ============================================================ */
+    body:not(.robust-authenticated) #aiCopilotWidget {
+      display: none !important;
+      visibility: hidden !important;
+      pointer-events: none !important;
+    }
+
+    body.robust-authenticated #aiCopilotWidget {
+      display: flex !important;
+      visibility: visible !important;
+      pointer-events: auto;
+    }
+
+    /* Launcher v3.11 — visual laranja/amarelo */
+    #btnGlobalVoice {
+      background: #f59e0b !important;
+      color: #0f172a !important;
+      border-color: #fbbf24 !important;
+      box-shadow: 0 10px 30px rgba(245, 158, 11, .28);
+    }
+
+    #btnGlobalVoice:hover {
+      background: #fbbf24 !important;
+      color: #0f172a !important;
+      transform: translateY(-1px) scale(1.02);
+    }
+
+    #btnGlobalVoice .copilot-launcher-icon {
+      background: #0f172a !important;
+      color: #fbbf24 !important;
+    }
+
+    @media (max-width: 640px) {
+      #btnGlobalVoice {
+        min-height: 54px;
+        padding-left: 14px !important;
+        padding-right: 14px !important;
+        border-radius: 999px !important;
+      }
+    }
+
   </style>
 </head>
 <body class="bg-slate-100 text-slate-800 font-sans min-h-screen relative">
@@ -463,7 +539,7 @@
   </div>
 
   <!-- ================= ROBUST COPILOT IA V3 ================= -->
-  <div id="aiCopilotWidget" style="display:none;" class="fixed bottom-5 right-5 z-[70] flex flex-col items-end gap-3 no-print">
+  <div id="aiCopilotWidget" style="display:none; visibility:hidden;" aria-hidden="true" class="fixed bottom-5 left-5 z-[70] flex flex-col items-start gap-3 no-print">
     <div id="copilotChatBox" class="hidden w-[min(94vw,430px)] bg-slate-950/95 text-white rounded-3xl border border-slate-700 copilot-glow copilot-shell overflow-hidden flex flex-col">
       <div class="px-4 py-3.5 bg-gradient-to-r from-slate-900 via-slate-900 to-slate-800 border-b border-slate-700">
         <div class="flex items-center justify-between gap-3">
@@ -502,7 +578,19 @@
       </div></div>
       <div class="p-3 bg-slate-950 flex items-end gap-2"><div class="flex-1 relative"><textarea id="copilotInputText" rows="1" placeholder="Digite o que você quer fazer..." onkeydown="handleCopilotKeydown(event)" class="w-full resize-none bg-slate-900 border border-slate-700 rounded-2xl pl-3 pr-11 py-2.5 text-xs font-semibold text-slate-200 outline-none focus:border-amber-500 focus:ring-2 focus:ring-amber-500/10 placeholder:text-slate-600"></textarea><button onclick="toggleCopilotVoice()" title="Falar com o Copilot" aria-label="Falar com o Copilot" class="absolute right-2 bottom-2 w-7 h-7 rounded-lg text-slate-400 hover:text-amber-300 hover:bg-slate-800 flex items-center justify-center transition"><i class="fa-solid fa-microphone text-[11px]"></i></button></div><button id="btnCopilotSend" onclick="sendCopilotText()" title="Enviar comando" aria-label="Enviar comando" class="w-10 h-10 rounded-2xl bg-amber-500 hover:bg-amber-400 text-slate-950 flex items-center justify-center shadow-lg shadow-amber-500/10 transition transform hover:scale-[1.03]"><i class="fa-solid fa-arrow-up text-sm"></i></button></div>
     </div>
-    <button id="btnGlobalVoice" onclick="toggleCopilotBox()" aria-label="Abrir Robust Copilot" title="Abrir Robust Copilot" class="copilot-pulse group bg-slate-950 hover:bg-slate-900 text-white p-3 rounded-2xl shadow-2xl border border-amber-400/50 flex items-center gap-2.5 transition transform hover:scale-105"><div class="w-9 h-9 rounded-xl bg-amber-500 text-slate-950 flex items-center justify-center"><i class="fa-solid fa-brain"></i></div><div class="hidden md:block text-left pr-1"><div class="text-[9px] font-black uppercase tracking-wider text-amber-300">Assistente IA</div><div id="launcherName" class="text-xs font-black text-white">Robust Copilot</div></div></button>
+    <button id="btnGlobalVoice"
+      onclick="toggleCopilotBox()"
+      aria-label="Abrir Robust Copilot"
+      title="Abrir Robust Copilot"
+      class="copilot-pulse group bg-amber-500 hover:bg-amber-400 text-slate-950 px-3.5 py-2.5 rounded-full shadow-2xl border border-amber-300 flex items-center gap-2.5 transition transform hover:scale-105">
+      <div class="copilot-launcher-icon w-9 h-9 rounded-xl bg-slate-950 text-amber-400 flex items-center justify-center">
+        <i class="fa-solid fa-brain"></i>
+      </div>
+      <div class="hidden md:block text-left pr-1">
+        <div class="text-[9px] font-black uppercase tracking-wider text-slate-900">Assistente IA</div>
+        <div id="launcherName" class="text-xs font-black text-slate-950">Robust Copilot</div>
+      </div>
+    </button>
   </div>
 
   <!-- MODAIS AUXILIARES DE FORMULÁRIOS -->
@@ -649,7 +737,6 @@
       loginBtn.disabled = true;
 
       const { data, error } = await db.auth.signInWithPassword({ email, password });
-        setCopilotVisibility(true);
 
       if (error) {
         alert("Erro de acesso: " + error.message);
@@ -659,6 +746,7 @@
       }
 
       document.getElementById("userDisplayName").innerText = data.user.email;
+      setCopilotVisibility(true);
       document.getElementById("viewLogin").classList.add("hidden");
       document.getElementById("appContainer").classList.remove("hidden");
       
@@ -668,6 +756,7 @@
 
     async function logout() {
       await db.auth.signOut();
+      setCopilotVisibility(false);
       document.getElementById("loginEmail").value = "office@robustconstructions.com";
       document.getElementById("loginPassword").value = "";
       document.getElementById("appContainer").classList.add("hidden");
@@ -2209,15 +2298,25 @@
       const widget = document.getElementById("aiCopilotWidget");
       if (!widget) return;
 
-      widget.style.display = isAuthenticated ? "" : "none";
+      document.body.classList.toggle("robust-authenticated", !!isAuthenticated);
+
+      if (isAuthenticated) {
+        widget.style.removeProperty("display");
+        widget.style.removeProperty("visibility");
+      } else {
+        widget.style.setProperty("display", "none");
+        widget.style.setProperty("visibility", "hidden");
+      }
+
+      widget.setAttribute("aria-hidden", isAuthenticated ? "false" : "true");
 
       // Segurança UX: se a sessão terminou, feche o painel do Copilot.
       if (!isAuthenticated) {
-        const panel = document.getElementById("aiCopilotPanel");
+        const panel = document.getElementById("copilotChatBox");
         if (panel) panel.classList.add("hidden");
 
-        const examples = document.getElementById("copilotExamplesModal");
-        if (examples) examples.classList.add("hidden");
+        const help = document.getElementById("copilotHelpPanel");
+        if (help) help.classList.add("hidden");
       }
     }
 
@@ -2241,5 +2340,8 @@
     syncCopilotWithAuth();
 
   </script>
+
+  <div id="appVersionFooter" class="fixed bottom-1 left-1/2 -translate-x-1/2 z-[60] px-2 py-1 rounded-full bg-slate-900/75 backdrop-blur-sm border border-slate-700/50 text-[9px] font-bold tracking-wide text-slate-400 pointer-events-none select-none no-print">RobustConstructions · v3.11</div>
+
 </body>
 </html>
