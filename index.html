@@ -55,16 +55,8 @@
       position: relative;
     }
 
-  
-    /* Copilot: visibility is controlled by Supabase Auth */
-    #aiCopilotWidget[style*="display:none"] { pointer-events: none; }
-
-  
     /* ============================================================
-       v3.11 — COPILOT MOBILE / AUTHENTICATED UI
-       - Launcher no canto inferior esquerdo.
-       - Painel alinhado pela esquerda, sem sair da viewport.
-       - Safe-area para iPhone.
+       COPILOT MOBILE / AUTHENTICATED UI
        ============================================================ */
     #aiCopilotWidget {
       left: max(12px, env(safe-area-inset-left));
@@ -90,11 +82,7 @@
       }
     }
 
-  
-    /* ============================================================
-       v3.11 — AUTH GATE DO COPILOT
-       O widget permanece invisível por CSS até existir sessão.
-       ============================================================ */
+    /* AUTH GATE DO COPILOT: Invisível por padrão */
     body:not(.robust-authenticated) #aiCopilotWidget {
       display: none !important;
       visibility: hidden !important;
@@ -107,7 +95,7 @@
       pointer-events: auto;
     }
 
-    /* Launcher v3.11 — visual laranja/amarelo */
+    /* Launcher visual */
     #btnGlobalVoice {
       background: #f59e0b !important;
       color: #0f172a !important;
@@ -134,7 +122,6 @@
         border-radius: 999px !important;
       }
     }
-
   </style>
 </head>
 <body class="bg-slate-100 text-slate-800 font-sans min-h-screen relative">
@@ -539,7 +526,7 @@
   </div>
 
   <!-- ================= ROBUST COPILOT IA V3 ================= -->
-  <div id="aiCopilotWidget" style="display:none; visibility:hidden;" aria-hidden="true" class="fixed bottom-5 left-5 z-[70] flex flex-col items-start gap-3 no-print">
+  <div id="aiCopilotWidget" style="display:none !important; visibility:hidden !important;" aria-hidden="true" class="fixed bottom-5 left-5 z-[70] flex flex-col items-start gap-3 no-print">
     <div id="copilotChatBox" class="hidden w-[min(94vw,430px)] bg-slate-950/95 text-white rounded-3xl border border-slate-700 copilot-glow copilot-shell overflow-hidden flex flex-col">
       <div class="px-4 py-3.5 bg-gradient-to-r from-slate-900 via-slate-900 to-slate-800 border-b border-slate-700">
         <div class="flex items-center justify-between gap-3">
@@ -554,15 +541,15 @@
         </div>
       </div>
       <div id="copilotHelpPanel" class="hidden absolute left-3 right-3 top-[74px] z-40 copilot-help rounded-2xl border border-amber-400/20 bg-slate-950/98 p-3.5 shadow-2xl max-h-[340px] overflow-y-auto">
-        <div class="flex items-start gap-2 mb-3"><div class="w-7 h-7 rounded-lg bg-amber-400/10 text-amber-300 flex items-center justify-center shrink-0"><i class="fa-solid fa-lightbulb text-xs"></i></div><div><div class="text-[11px] font-black uppercase tracking-wider text-amber-300">Como falar com a IA</div><div class="text-[10px] text-slate-400 mt-0.5">Escreva naturalmente. Você não precisa decorar comandos.</div></div></div>
+        <div class="flex items-start gap-2 mb-3"><div class="w-7 h-7 rounded-lg bg-amber-400/10 text-amber-300 flex items-center justify-center shrink-0"><i class="fa-solid fa-lightbulb text-xs"></i></div><div><div class="text-[11px] font-black uppercase tracking-wider text-amber-300">Como falar com a IA</div><div class="text-[10px] text-slate-400 mt-0.5">Escreva naturally. Você não precisa decorar comandos.</div></div></div>
         <div class="space-y-2">
           <button onclick="useCopilotExample('Cadastre o colaborador Carlos Silva, Pedreiro')" class="w-full text-left p-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 border border-slate-700 copilot-chip"><span class="block text-[9px] font-black uppercase text-slate-500 mb-0.5">Colaborador</span><span class="text-[11px] font-semibold text-slate-200">“Cadastre o colaborador Carlos Silva, Pedreiro”</span></button>
           <button onclick="useCopilotExample('Inclua a ocorrência EPI com 30 pontos')" class="w-full text-left p-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 border border-slate-700 copilot-chip"><span class="block text-[9px] font-black uppercase text-slate-500 mb-0.5">Ocorrência</span><span class="text-[11px] font-semibold text-slate-200">“Inclua a ocorrência EPI com 30 pontos”</span></button>
           <button onclick="useCopilotExample('Edite a ocorrência EPI para 20 pontos')" class="w-full text-left p-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 border border-slate-700 copilot-chip"><span class="block text-[9px] font-black uppercase text-slate-500 mb-0.5">Edição</span><span class="text-[11px] font-semibold text-slate-200">“Edite a ocorrência EPI para 20 pontos”</span></button>
           <button onclick="useCopilotExample('Abra a tela de avaliados')" class="w-full text-left p-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 border border-slate-700 copilot-chip"><span class="block text-[9px] font-black uppercase text-slate-500 mb-0.5">Navegação</span><span class="text-[11px] font-semibold text-slate-200">“Abra a tela de avaliados”</span></button>
           <button onclick="useCopilotExample('Abra o Dashboard do ano 2025')" class="copilot-example">Abra o Dashboard do ano 2025</button>
-              <button onclick="useCopilotExample('Exclua o lançamento do Carlos Silva de 24/08/2026 a 30/08/2026')" class="copilot-example">Exclua o lançamento do Carlos Silva de 24/08/2026 a 30/08/2026</button>
-              <button onclick="useCopilotExample('Abra a tela de Bônus')" class="w-full text-left p-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 border border-slate-700 copilot-chip"><span class="block text-[9px] font-black uppercase text-slate-500 mb-0.5">Bônus</span><span class="text-[11px] font-semibold text-slate-200">“Abra a tela de Bônus”</span></button>
+          <button onclick="useCopilotExample('Exclua o lançamento do Carlos Silva de 24/08/2026 a 30/08/2026')" class="copilot-example">Exclua o lançamento do Carlos Silva de 24/08/2026 a 30/08/2026</button>
+          <button onclick="useCopilotExample('Abra a tela de Bônus')" class="w-full text-left p-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 border border-slate-700 copilot-chip"><span class="block text-[9px] font-black uppercase text-slate-500 mb-0.5">Bônus</span><span class="text-[11px] font-semibold text-slate-200">“Abra a tela de Bônus”</span></button>
           <button onclick="useCopilotExample('Abra a tela de Bônus do ano 2025')" class="w-full text-left p-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 border border-slate-700 copilot-chip"><span class="block text-[9px] font-black uppercase text-slate-500 mb-0.5">Bônus por ano</span><span class="text-[11px] font-semibold text-slate-200">“Abra a tela de Bônus do ano 2025”</span></button>
         </div>
       </div>
@@ -701,12 +688,6 @@
     const SUPABASE_URL = "https://smfqmmjnoqarpxknjirl.supabase.co";
     const SUPABASE_PUBLISHABLE_KEY = "sb_publishable_PnKIn_AgcuuyR9tE-hXhiw_TBzbqopl";
     
-    // ============================================================
-    // CONFIGURAÇÃO DO COPILOT IA — V3 SEGURA
-    // ============================================================
-    // A chave Gemini NÃO fica mais neste HTML.
-    // O navegador chama uma Supabase Edge Function autenticada,
-    // e a Edge Function guarda GEMINI_API_KEY como secret de servidor.
     const COPILOT_FUNCTION_NAME = "robust-copilot";
     const COPILOT_DISPLAY_NAME = "Robust Copilot";
 
@@ -727,6 +708,50 @@
     document.getElementById("copilotDisplayName")?.replaceChildren(document.createTextNode(COPILOT_DISPLAY_NAME));
     document.getElementById("launcherName")?.replaceChildren(document.createTextNode(COPILOT_DISPLAY_NAME));
 
+    // ============================================================
+    // VISIBILIDADE / AUTH GATE DO COPILOT
+    // ============================================================
+    function setCopilotVisibility(isAuthenticated) {
+      const widget = document.getElementById("aiCopilotWidget");
+      if (!widget) return;
+
+      document.body.classList.toggle("robust-authenticated", !!isAuthenticated);
+
+      if (isAuthenticated) {
+        widget.style.removeProperty("display");
+        widget.style.removeProperty("visibility");
+        widget.setAttribute("aria-hidden", "false");
+      } else {
+        widget.style.setProperty("display", "none", "important");
+        widget.style.setProperty("visibility", "hidden", "important");
+        widget.setAttribute("aria-hidden", "true");
+
+        // Se deslogou, fecha o chat imediatamente por segurança UX
+        const panel = document.getElementById("copilotChatBox");
+        if (panel) panel.classList.add("hidden");
+
+        const help = document.getElementById("copilotHelpPanel");
+        if (help) help.classList.add("hidden");
+      }
+    }
+
+    async function syncCopilotWithAuth() {
+      try {
+        const { data } = await db.auth.getSession();
+        setCopilotVisibility(!!data?.session?.user);
+      } catch (err) {
+        console.error("Erro ao sincronizar visibilidade do Copilot:", err);
+        setCopilotVisibility(false);
+      }
+    }
+
+    db.auth.onAuthStateChange((event, session) => {
+      setCopilotVisibility(!!session?.user);
+    });
+
+    // Inicialização da trava no carregamento
+    syncCopilotWithAuth();
+
     async function handleLogin(e) {
       e.preventDefault();
       const email = document.getElementById("loginEmail").value;
@@ -742,6 +767,7 @@
         alert("Erro de acesso: " + error.message);
         loginBtn.innerHTML = '<i class="fa-solid fa-right-to-bracket"></i> Entrar no Sistema';
         loginBtn.disabled = false;
+        setCopilotVisibility(false);
         return;
       }
 
@@ -764,13 +790,6 @@
     }
 
     async function fetchAllFromSupabase(scope = "all") {
-      /*
-       * PERFORMANCE:
-       * - Consultas independentes são executadas em paralelo.
-       * - Cada operação busca somente as colunas realmente usadas.
-       * - Após um CRUD, atualizamos somente o conjunto afetado.
-       * - Navegar entre telas NÃO dispara nova consulta ao banco.
-       */
       const tasks = [];
 
       if (scope === "all" || scope === "config") {
@@ -833,7 +852,6 @@
         populateWorkerSelect();
       }
 
-      // Renderiza somente a tela que realmente precisa ser atualizada.
       if (scope === "all" || scope === "config") {
         renderConfigFields();
       }
@@ -923,71 +941,28 @@
 
     // DASHBOARD
     function renderDashboard() {
-      /*
-       * REGRA DE NEGÓCIO DO DASHBOARD
-       *
-       * O Dashboard NÃO parte do cadastro de colaboradores.
-       * Ele parte exclusivamente dos LANÇAMENTOS (EVALUATIONS)
-       * do ANO DE REFERÊNCIA selecionado.
-       *
-       * Portanto:
-       * - colaborador cadastrado sem lançamento NÃO aparece;
-       * - métricas contam somente lançamentos do ano;
-       * - gráficos usam somente colaboradores com lançamento;
-       * - projeção de bônus considera somente colaboradores lançados;
-       * - ocorrência sem lançamento no ano não entra nas métricas.
-       */
-
-      document.getElementById("dashInitialPointsCard").innerText =
-        `${GLOBAL_CONFIG.initialPoints} pts`;
-
-      // Popula o seletor do Dashboard com os anos que realmente possuem lançamentos.
+      document.getElementById("dashInitialPointsCard").innerText = `${GLOBAL_CONFIG.initialPoints} pts`;
       populateDashboardYears();
 
-      const dashboardSelect =
-        document.getElementById("dashboardYear");
-
-      const selectedYear = Number(
-        dashboardSelect?.value || new Date().getFullYear()
-      );
-
-      const dashboardYearStatus =
-        document.getElementById("dashboardYearStatus");
+      const dashboardSelect = document.getElementById("dashboardYear");
+      const selectedYear = Number(dashboardSelect?.value || new Date().getFullYear());
+      const dashboardYearStatus = document.getElementById("dashboardYearStatus");
 
       if (dashboardYearStatus) {
-        const hasYearLaunches = EVALUATIONS.some(e =>
-          getEvaluationReferenceYear(e) === selectedYear
-        );
-
-        dashboardYearStatus.innerText =
-          hasYearLaunches
-            ? "Lançamentos do período"
-            : "Nenhum lançamento neste ano";
-
-        dashboardYearStatus.classList.toggle(
-          "text-rose-500",
-          !hasYearLaunches
-        );
-        dashboardYearStatus.classList.toggle(
-          "text-slate-400",
-          hasYearLaunches
-        );
+        const hasYearLaunches = EVALUATIONS.some(e => getEvaluationReferenceYear(e) === selectedYear);
+        dashboardYearStatus.innerText = hasYearLaunches ? "Lançamentos do período" : "Nenhum lançamento neste ano";
+        dashboardYearStatus.classList.toggle("text-rose-500", !hasYearLaunches);
+        dashboardYearStatus.classList.toggle("text-slate-400", hasYearLaunches);
       }
-
 
       let totalPenaltyAll = 0;
       const workerSummary = {};
       const occurrenceCounts = {};
 
-      // Somente lançamentos do ano selecionado.
-      const yearEvals = EVALUATIONS.filter(e =>
-        getEvaluationReferenceYear(e) === selectedYear
-      );
+      const yearEvals = EVALUATIONS.filter(e => getEvaluationReferenceYear(e) === selectedYear);
 
-      // O trabalhador entra no Dashboard SOMENTE se existir lançamento.
       yearEvals.forEach(e => {
         const workerName = String(e.worker_name || "").trim();
-
         if (!workerName) return;
 
         if (!workerSummary[workerName]) {
@@ -1000,22 +975,17 @@
         }
 
         const penalty = Number(e.totalScore) || 0;
-
         workerSummary[workerName].totalPenalty += penalty;
         totalPenaltyAll += penalty;
 
         if (Array.isArray(e.answers)) {
           e.answers.forEach(a => {
             const count = Number(a.count) || 0;
-
             if (count > 0) {
               const question = String(a.question || "").trim();
-
               if (question) {
-                occurrenceCounts[question] =
-                  (occurrenceCounts[question] || 0) + count;
+                occurrenceCounts[question] = (occurrenceCounts[question] || 0) + count;
               }
-
               workerSummary[workerName].occurrencesCount += count;
             }
           });
@@ -1025,145 +995,84 @@
       const workerList = Object.values(workerSummary)
         .map(w => ({
           ...w,
-          remainingPts: Math.max(
-            0,
-            GLOBAL_CONFIG.initialPoints - w.totalPenalty
-          )
+          remainingPts: Math.max(0, GLOBAL_CONFIG.initialPoints - w.totalPenalty)
         }))
         .sort((a, b) => b.remainingPts - a.remainingPts);
 
-      // Cards principais
-      document.getElementById("dashTotalCount").innerText =
-        yearEvals.length;
+      document.getElementById("dashTotalCount").innerText = yearEvals.length;
+      document.getElementById("dashTotalPenalty").innerText = `${totalPenaltyAll} pts`;
 
-      document.getElementById("dashTotalPenalty").innerText =
-        `${totalPenaltyAll} pts`;
-
-      // Líder / alerta
       if (workerList.length > 0) {
         const best = workerList[0];
-
-        document.getElementById("dashBestWorker").innerText =
-          best.name;
-
-        document.getElementById("dashBestWorkerPts").innerText =
-          `${best.remainingPts} pts mantidos`;
+        document.getElementById("dashBestWorker").innerText = best.name;
+        document.getElementById("dashBestWorkerPts").innerText = `${best.remainingPts} pts mantidos`;
 
         const worst = workerList[workerList.length - 1];
-
-        document.getElementById("dashWorstWorker").innerText =
-          worst.name;
-
-        document.getElementById("dashWorstWorkerPts").innerText =
-          `${worst.remainingPts} pts mantidos`;
+        document.getElementById("dashWorstWorker").innerText = worst.name;
+        document.getElementById("dashWorstWorkerPts").innerText = `${worst.remainingPts} pts mantidos`;
       } else {
         document.getElementById("dashBestWorker").innerText = "-";
-        document.getElementById("dashBestWorkerPts").innerText =
-          "0 pts mantidos";
-
+        document.getElementById("dashBestWorkerPts").innerText = "0 pts mantidos";
         document.getElementById("dashWorstWorker").innerText = "-";
-        document.getElementById("dashWorstWorkerPts").innerText =
-          "0 pts mantidos";
+        document.getElementById("dashWorstWorkerPts").innerText = "0 pts mantidos";
       }
 
-      /*
-       * Projeção de bônus:
-       * somente os colaboradores que possuem lançamento no ano.
-       */
-      const maxPossibleBonusUSD =
-        workerList.length *
-        GLOBAL_CONFIG.initialPoints *
-        GLOBAL_CONFIG.pointValue;
-
+      const maxPossibleBonusUSD = workerList.length * GLOBAL_CONFIG.initialPoints * GLOBAL_CONFIG.pointValue;
       let totalBonusUSD = 0;
 
       workerList.forEach(w => {
-        totalBonusUSD +=
-          w.remainingPts *
-          GLOBAL_CONFIG.pointValue;
+        totalBonusUSD += w.remainingPts * GLOBAL_CONFIG.pointValue;
       });
 
-      document.getElementById("dashTotalBonusToPay").innerText =
-        `$${totalBonusUSD.toFixed(2)}`;
+      document.getElementById("dashTotalBonusToPay").innerText = `$${totalBonusUSD.toFixed(2)}`;
 
-      const retentionRate =
-        maxPossibleBonusUSD > 0
-          ? ((totalBonusUSD / maxPossibleBonusUSD) * 100)
-          : 100;
+      const retentionRate = maxPossibleBonusUSD > 0 ? ((totalBonusUSD / maxPossibleBonusUSD) * 100) : 100;
+      document.getElementById("dashRetentionRate").innerText = `${retentionRate.toFixed(1)}%`;
 
-      document.getElementById("dashRetentionRate").innerText =
-        `${retentionRate.toFixed(1)}%`;
-
-      // Gráficos: somente dados de lançamentos do ano.
       renderChart(workerSummary);
       renderOccurrencesChart(occurrenceCounts);
     }
 
     function getAvailableDashboardYears() {
       const years = new Set();
-
       EVALUATIONS.forEach(e => {
         const year = getEvaluationReferenceYear(e);
-
-        if (year) {
-          years.add(year);
-        }
+        if (year) years.add(year);
       });
-
-      // O ano atual é útil para permitir consulta mesmo quando ainda
-      // não existe lançamento nele.
       years.add(new Date().getFullYear());
-
       return [...years].sort((a, b) => a - b);
     }
 
     function populateDashboardYears(preferredYear = null) {
-      const select =
-        document.getElementById("dashboardYear");
-
+      const select = document.getElementById("dashboardYear");
       if (!select) return;
 
-      const currentValue =
-        preferredYear ||
-        Number(select.value) ||
-        new Date().getFullYear();
-
-      const years =
-        getAvailableDashboardYears();
+      const currentValue = preferredYear || Number(select.value) || new Date().getFullYear();
+      const years = getAvailableDashboardYears();
 
       select.innerHTML = "";
-
       years.forEach(year => {
-        const option =
-          document.createElement("option");
-
+        const option = document.createElement("option");
         option.value = String(year);
         option.textContent = String(year);
-
         select.appendChild(option);
       });
 
       if (!years.includes(Number(currentValue))) {
-        const option =
-          document.createElement("option");
-
+        const option = document.createElement("option");
         option.value = String(currentValue);
         option.textContent = String(currentValue);
-
         select.appendChild(option);
       }
 
-      select.value =
-        String(currentValue);
+      select.value = String(currentValue);
     }
-
 
     function setDashboardYear(year) {
       const select = document.getElementById("dashboardYear");
       if (!select) return;
 
       const value = String(year);
-
       if (![...select.options].some(o => o.value === value)) {
         const option = document.createElement("option");
         option.value = value;
@@ -1235,61 +1144,29 @@
     function toggleCopilotVoice(){ document.getElementById("copilotChatBox").classList.remove("hidden"); startGlobalVoiceRecognition(); }
     function startGlobalVoiceRecognition(){ const SpeechRecognition=window.SpeechRecognition||window.webkitSpeechRecognition; if(!SpeechRecognition)return addCopilotMessage('ai',"⚠️ Seu navegador não oferece reconhecimento de voz."); const recognition=new SpeechRecognition(); recognition.lang="pt-BR"; recognition.interimResults=false; recognition.maxAlternatives=1; addCopilotMessage('ai',"🎙️ Estou ouvindo. Fale seu comando..."); try{recognition.start();}catch(e){console.warn("SpeechRecognition:",e);} recognition.onresult=e=>{const transcript=e.results[0][0].transcript; addCopilotMessage('user',`🎙️ ${transcript}`); processCopilotCommand(transcript);}; recognition.onerror=e=>{console.warn("SpeechRecognition error:",e); addCopilotMessage('ai',"⚠️ Não consegui interpretar o áudio. Tente novamente.");}; }
 
-    // O browser envia somente o comando para a Edge Function.
-    // A GEMINI_API_KEY fica exclusivamente no ambiente de servidor.
     function detectLocalNavigation(prompt) {
-      const normalized = String(prompt || "")
-        .normalize("NFD")
-        .replace(/[\u0300-\u036f]/g, "")
-        .toLowerCase()
-        .trim();
-
+      const normalized = String(prompt || "").normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().trim();
       const yearMatch = normalized.match(/\b(20\d{2})\b/);
       const year = yearMatch ? Number(yearMatch[1]) : 0;
-
-      const isNavigationVerb =
-        /^(abra|abrir|abre|mostre|mostrar|va para|ir para|acesse|acessar|quero ver|quero abrir|entre em|entre na)\b/.test(normalized);
+      const isNavigationVerb = /^(abra|abrir|abre|mostre|mostrar|va para|ir para|acesse|acessar|quero ver|quero abrir|entre em|entre na)\b/.test(normalized);
 
       if (!isNavigationVerb) return null;
-
-      if (/\b(dashboard|painel)\b/.test(normalized)) {
-        return { tela: "dashboard", year };
-      }
-
-      if (/\b(bonus|bonos|apuracao)\b/.test(normalized)) {
-        return { tela: "apuracao", year };
-      }
-
-      if (/\b(lancamentos?|avaliacoes?)\b/.test(normalized)) {
-        return { tela: "evaluations", year: 0 };
-      }
-
-      if (/\b(ocorrencias?|perguntas?)\b/.test(normalized)) {
-        return { tela: "questions", year: 0 };
-      }
-
-      if (/\b(colaboradores?|avaliados?|funcionarios?)\b/.test(normalized)) {
-        return { tela: "workers", year: 0 };
-      }
-
-      if (/\b(parametros?|configuracoes?)\b/.test(normalized)) {
-        return { tela: "config", year: 0 };
-      }
-
+      if (/\b(dashboard|painel)\b/.test(normalized)) return { tela: "dashboard", year };
+      if (/\b(bonus|bonos|apuracao)\b/.test(normalized)) return { tela: "apuracao", year };
+      if (/\b(lancamentos?|avaliacoes?)\b/.test(normalized)) return { tela: "evaluations", year: 0 };
+      if (/\b(ocorrencias?|perguntas?)\b/.test(normalized)) return { tela: "questions", year: 0 };
+      if (/\b(colaboradores?|avaliados?|funcionarios?)\b/.test(normalized)) return { tela: "workers", year: 0 };
+      if (/\b(parametros?|configuracoes?)\b/.test(normalized)) return { tela: "config", year: 0 };
       return null;
     }
 
     function applyCopilotNavigation(tela, year = 0) {
       if (year > 0) {
-        if (tela === "apuracao") {
-          setBonusYear(year);
-        } else if (tela === "dashboard") {
-          setDashboardYear(year);
-        }
+        if (tela === "apuracao") setBonusYear(year);
+        else if (tela === "dashboard") setDashboardYear(year);
       }
 
       navTo(tela);
-
       const labels = {
         dashboard: "DASHBOARD",
         evaluations: "LANÇAMENTOS",
@@ -1299,39 +1176,23 @@
         config: "PARÂMETROS"
       };
 
-      const suffix =
-        ((tela === "apuracao" || tela === "dashboard") && year > 0)
-          ? ` — ${year}`
-          : "";
-
-      addCopilotMessage(
-        "ai",
-        `✅ Tela alterada para: ${labels[tela] || tela.toUpperCase()}${suffix}`
-      );
+      const suffix = ((tela === "apuracao" || tela === "dashboard") && year > 0) ? ` — ${year}` : "";
+      addCopilotMessage("ai", `✅ Tela alterada para: ${labels[tela] || tela.toUpperCase()}${suffix}`);
     }
 
     function parseDateFlexible(value) {
       if (!value) return null;
-
       const text = String(value).trim();
 
       let match = text.match(/^(\d{4})-(\d{2})-(\d{2})$/);
       if (match) {
-        const d = new Date(
-          Number(match[1]),
-          Number(match[2]) - 1,
-          Number(match[3])
-        );
+        const d = new Date(Number(match[1]), Number(match[2]) - 1, Number(match[3]));
         return Number.isNaN(d.getTime()) ? null : d;
       }
 
       match = text.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/);
       if (match) {
-        const d = new Date(
-          Number(match[3]),
-          Number(match[2]) - 1,
-          Number(match[1])
-        );
+        const d = new Date(Number(match[3]), Number(match[2]) - 1, Number(match[1]));
         return Number.isNaN(d.getTime()) ? null : d;
       }
 
@@ -1340,10 +1201,7 @@
 
     function parseEvaluationRange(periodDates) {
       const text = String(periodDates || "");
-
-      const matches = [
-        ...text.matchAll(/(\d{1,2}\/\d{1,2}\/\d{4})/g)
-      ].map(m => m[1]);
+      const matches = [...text.matchAll(/(\d{1,2}\/\d{1,2}\/\d{4})/g)].map(m => m[1]);
 
       if (matches.length >= 2) {
         return {
@@ -1351,7 +1209,6 @@
           end: parseDateFlexible(matches[1])
         };
       }
-
       return null;
     }
 
@@ -1365,9 +1222,7 @@
     }
 
     function formatDateBR(date) {
-      return date
-        ? date.toLocaleDateString("pt-BR")
-        : "";
+      return date ? date.toLocaleDateString("pt-BR") : "";
     }
 
     async function handleSafeDeleteEvaluation(args) {
@@ -1376,28 +1231,18 @@
       const end = parseDateFlexible(args?.periodo_fim);
 
       if (!workerName) {
-        addCopilotMessage(
-          "ai",
-          "⚠️ Para excluir um lançamento, preciso saber qual colaborador."
-        );
+        addCopilotMessage("ai", "⚠️ Para excluir um lançamento, preciso saber qual colaborador.");
         return;
       }
 
-      // Regra de segurança: nunca excluir sem período explícito.
       if (!start || !end) {
-        addCopilotMessage(
-          "ai",
-          `🔒 Para sua segurança, não vou excluir nenhum lançamento de '${workerName}' sem um período específico. Informe, por exemplo: 24/08/2026 a 30/08/2026.`
-        );
+        addCopilotMessage("ai", `🔒 Para sua segurança, não vou excluir nenhum lançamento de '${workerName}' sem um período específico. Informe, por exemplo: 24/08/2026 a 30/08/2026.`);
         return;
       }
 
       const workerKey = workerName.toLowerCase();
-
       const matches = EVALUATIONS.filter(e => {
-        const nameMatches =
-          String(e.worker_name || "").trim().toLowerCase() === workerKey;
-
+        const nameMatches = String(e.worker_name || "").trim().toLowerCase() === workerKey;
         const range = parseEvaluationRange(e.period_dates);
 
         return (
@@ -1410,28 +1255,18 @@
       });
 
       if (matches.length === 0) {
-        addCopilotMessage(
-          "ai",
-          `⚠️ Não encontrei um lançamento de '${workerName}' no período ${formatDateBR(start)} a ${formatDateBR(end)}.`
-        );
+        addCopilotMessage("ai", `⚠️ Não encontrei um lançamento de '${workerName}' no período ${formatDateBR(start)} a ${formatDateBR(end)}.`);
         return;
       }
 
       if (matches.length > 1) {
-        addCopilotMessage(
-          "ai",
-          `⚠️ Encontrei ${matches.length} lançamentos de '${workerName}' nesse período. Não vou escolher um registro por conta própria. Precisamos identificar o lançamento exato.`
-        );
+        addCopilotMessage("ai", `⚠️ Encontrei ${matches.length} lançamentos de '${workerName}' nesse período. Não vou escolher um registro por conta própria. Precisamos identificar o lançamento exato.`);
         return;
       }
 
       const target = matches[0];
-
       const totalOccurrences = Array.isArray(target.answers)
-        ? target.answers.reduce(
-            (sum, item) => sum + (Number(item.count) || 0),
-            0
-          )
+        ? target.answers.reduce((sum, item) => sum + (Number(item.count) || 0), 0)
         : 0;
 
       const confirmed = window.confirm(
@@ -1445,35 +1280,22 @@
       );
 
       if (!confirmed) {
-        addCopilotMessage(
-          "ai",
-          "🛡️ Exclusão cancelada. Nenhum dado foi alterado."
-        );
+        addCopilotMessage("ai", "🛡️ Exclusão cancelada. Nenhum dado foi alterado.");
         return;
       }
 
-      const { error } =
-        await db
-          .from("avaliacoes_ranking")
-          .delete()
-          .eq("id", target.id);
+      const { error } = await db.from("avaliacoes_ranking").delete().eq("id", target.id);
 
       if (error) {
         console.error("Erro ao excluir lançamento:", error);
-        addCopilotMessage(
-          "ai",
-          `❌ Não foi possível excluir o lançamento: ${error.message}`
-        );
+        addCopilotMessage("ai", `❌ Não foi possível excluir o lançamento: ${error.message}`);
         return;
       }
 
       await fetchAllFromSupabase("evaluations");
       navTo("evaluations");
 
-      addCopilotMessage(
-        "ai",
-        `🗑️ Lançamento de '${target.worker_name}' do período ${formatDateBR(start)} a ${formatDateBR(end)} excluído com sucesso.`
-      );
+      addCopilotMessage("ai", `🗑️ Lançamento de '${target.worker_name}' do período ${formatDateBR(start)} a ${formatDateBR(end)} excluído com sucesso.`);
     }
 
     async function processCopilotCommand(userPrompt) {
@@ -1490,63 +1312,34 @@
       setCopilotBusy(true);
       addCopilotMessage("ai", "🤖 Analisando intenção com a IA...");
 
-      // Comandos de navegação inequívocos não precisam atravessar a rede
-      // até o Gemini. Isso reduz latência perceptível e também custo.
       const localNavigation = detectLocalNavigation(prompt);
-
       if (localNavigation) {
-        applyCopilotNavigation(
-          localNavigation.tela,
-          localNavigation.year
-        );
+        applyCopilotNavigation(localNavigation.tela, localNavigation.year);
         setCopilotBusy(false);
         return;
       }
 
       const yearMatch = prompt.match(/\b(20\d{2})\b/);
-      const requestedYear =
-        yearMatch ? Number(yearMatch[1]) : 0;
-
-      const normalizedPrompt = prompt
-        .normalize("NFD")
-        .replace(/[\u0300-\u036f]/g, "")
-        .toLowerCase();
-
-      const bonusRequested =
-        /\b(bonus|bonos|apuracao|apuracao do bonus|resultado do bonus)\b/.test(
-          normalizedPrompt
-        );
+      const requestedYear = yearMatch ? Number(yearMatch[1]) : 0;
+      const normalizedPrompt = prompt.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
+      const bonusRequested = /\b(bonus|bonos|apuracao|apuracao do bonus|resultado do bonus)\b/.test(normalizedPrompt);
 
       try {
-        const { data, error } =
-          await db.functions.invoke("robust-copilot", {
-            body: { prompt }
-          });
+        const { data, error } = await db.functions.invoke("robust-copilot", { body: { prompt } });
 
         if (error) {
           console.error("Erro na Edge Function:", error);
-          addCopilotMessage(
-            "ai",
-            `⚠️ Não consegui acessar o Copilot seguro. ${error.message || "Verifique a Edge Function."}`
-          );
+          addCopilotMessage("ai", `⚠️ Não consegui acessar o Copilot seguro. ${error.message || "Verifique a Edge Function."}`);
           return;
         }
 
         if (!data?.ok || !data?.intent) {
-          console.error(
-            "Resposta inválida da Edge Function:",
-            data
-          );
-
-          addCopilotMessage(
-            "ai",
-            `⚠️ O Copilot não retornou uma intenção válida. ${data?.error || ""}`.trim()
-          );
+          console.error("Resposta inválida da Edge Function:", data);
+          addCopilotMessage("ai", `⚠️ O Copilot não retornou uma intenção válida. ${data?.error || ""}`.trim());
           return;
         }
 
         const parsed = data.intent;
-
         if (bonusRequested) {
           parsed.nome_tela = "apuracao";
           parsed.acao = "navegar";
@@ -1556,172 +1349,51 @@
           parsed.ano_referencia = requestedYear;
         }
 
-        console.log(
-          "Robust Copilot — intenção final:",
-          parsed
-        );
+        if (parsed.acao === "navegar" && parsed.nome_tela) {
+          applyCopilotNavigation(parsed.nome_tela.toLowerCase(), Number(parsed.ano_referencia) || 0);
 
-        if (
-          parsed.acao === "navegar" &&
-          parsed.nome_tela
-        ) {
-          applyCopilotNavigation(
-            parsed.nome_tela.toLowerCase(),
-            Number(parsed.ano_referencia) || 0
-          );
-
-        } else if (
-          parsed.acao === "cadastrar_avaliado"
-        ) {
+        } else if (parsed.acao === "cadastrar_avaliado") {
           if (!parsed.nome) {
-            addCopilotMessage(
-              "ai",
-              "⚠️ Preciso do nome do colaborador."
-            );
+            addCopilotMessage("ai", "⚠️ Preciso do nome do colaborador.");
             return;
           }
+          await executeCopilotFunction("cadastrar_avaliado", { nome: parsed.nome, funcao: parsed.funcao || "Geral" });
 
-          await executeCopilotFunction(
-            "cadastrar_avaliado",
-            {
-              nome: parsed.nome,
-              funcao: parsed.funcao || "Geral"
-            }
-          );
+        } else if (parsed.acao === "editar_avaliado") {
+          await executeCopilotFunction("editar_avaliado", { nome_busca: parsed.nome, nova_funcao: parsed.funcao });
 
-        } else if (
-          parsed.acao === "editar_avaliado"
-        ) {
-          await executeCopilotFunction(
-            "editar_avaliado",
-            {
-              nome_busca: parsed.nome,
-              nova_funcao: parsed.funcao
-            }
-          );
+        } else if (parsed.acao === "excluir_avaliado") {
+          await executeCopilotFunction("excluir_avaliado", { nome: parsed.nome });
 
-        } else if (
-          parsed.acao === "excluir_avaliado"
-        ) {
-          const confirmed = window.confirm(
-            `CONFIRMAÇÃO DE EXCLUSÃO\n\n` +
-            `Colaborador: ${parsed.nome}\n\n` +
-            `Deseja realmente excluir este colaborador?`
-          );
+        } else if (parsed.acao === "cadastrar_ocorrencia") {
+          const desc = parsed.descricao || parsed.nome || "Ocorrência sem nome";
+          const pts = Number.isFinite(Number(parsed.pontos)) ? Number(parsed.pontos) : 10;
+          await executeCopilotFunction("cadastrar_ocorrencia", { descricao: desc, pontos: pts });
 
-          if (!confirmed) {
-            addCopilotMessage(
-              "ai",
-              "🛡️ Exclusão cancelada. Nenhum dado foi alterado."
-            );
-            return;
-          }
+        } else if (parsed.acao === "editar_ocorrencia") {
+          await executeCopilotFunction("editar_ocorrencia", { descricao_busca: parsed.descricao || parsed.nome, novos_pontos: Number(parsed.pontos) });
 
-          await executeCopilotFunction(
-            "excluir_avaliado",
-            { nome: parsed.nome }
-          );
+        } else if (parsed.acao === "excluir_ocorrencia") {
+          await executeCopilotFunction("excluir_ocorrencia", { descricao: parsed.descricao || parsed.nome });
 
-        } else if (
-          parsed.acao === "cadastrar_ocorrencia"
-        ) {
-          const desc =
-            parsed.descricao ||
-            parsed.nome ||
-            "Ocorrência sem nome";
-
-          const pts =
-            Number.isFinite(Number(parsed.pontos))
-              ? Number(parsed.pontos)
-              : 10;
-
-          await executeCopilotFunction(
-            "cadastrar_ocorrencia",
-            {
-              descricao: desc,
-              pontos: pts
-            }
-          );
-
-        } else if (
-          parsed.acao === "editar_ocorrencia"
-        ) {
-          await executeCopilotFunction(
-            "editar_ocorrencia",
-            {
-              descricao_busca:
-                parsed.descricao ||
-                parsed.nome,
-              novos_pontos:
-                Number(parsed.pontos)
-            }
-          );
-
-        } else if (
-          parsed.acao === "excluir_ocorrencia"
-        ) {
-          const confirmed = window.confirm(
-            `CONFIRMAÇÃO DE EXCLUSÃO\n\n` +
-            `Ocorrência: ${parsed.descricao || parsed.nome}\n\n` +
-            `Deseja realmente excluir esta ocorrência?`
-          );
-
-          if (!confirmed) {
-            addCopilotMessage(
-              "ai",
-              "🛡️ Exclusão cancelada. Nenhum dado foi alterado."
-            );
-            return;
-          }
-
-          await executeCopilotFunction(
-            "excluir_ocorrencia",
-            {
-              descricao:
-                parsed.descricao ||
-                parsed.nome
-            }
-          );
-
-        } else if (
-          parsed.acao === "excluir_lancamento"
-        ) {
+        } else if (parsed.acao === "excluir_lancamento") {
           await handleSafeDeleteEvaluation(parsed);
 
-        } else if (
-          parsed.acao === "salvar_lancamento_semanal"
-        ) {
-          await executeCopilotFunction(
-            "salvar_lancamento_semanal",
-            {
-              nome_avaliado: parsed.nome,
-              ocorrencia_descricao:
-                parsed.descricao,
-              pontos:
-                Number(parsed.pontos) || 0,
-              quantidade:
-                Number(parsed.quantidade) || 1
-            }
-          );
+        } else if (parsed.acao === "salvar_lancamento_semanal") {
+          await executeCopilotFunction("salvar_lancamento_semanal", {
+            nome_avaliado: parsed.nome,
+            ocorrencia_descricao: parsed.descricao,
+            pontos: Number(parsed.pontos) || 0,
+            quantidade: Number(parsed.quantidade) || 1
+          });
 
         } else {
-          addCopilotMessage(
-            "ai",
-            "🤔 Não consegui identificar uma ação. Clique em ? para ver exemplos de comandos."
-          );
+          addCopilotMessage("ai", "🤔 Não consegui identificar uma ação. Clique em ? para ver exemplos de comandos.");
         }
 
       } catch (err) {
-        console.error(
-          "Erro no Copilot:",
-          err
-        );
-
-        addCopilotMessage(
-          "ai",
-          "❌ Ocorreu um erro ao processar o comando. Verifique se a Edge Function 'robust-copilot' está publicada."
-        );
-
+        console.error("Erro no Copilot:", err);
+        addCopilotMessage("ai", "❌ Ocorreu um erro ao processar o comando. Verifique se a Edge Function 'robust-copilot' está publicada.");
       } finally {
         setCopilotBusy(false);
       }
@@ -1732,7 +1404,6 @@
       if (!select) return;
 
       const value = String(year);
-
       if (![...select.options].some(o => o.value === value)) {
         const option = document.createElement("option");
         option.value = value;
@@ -1769,10 +1440,7 @@
         const target = WORKERS.find(w => w.name.toLowerCase().includes(args.nome.toLowerCase()));
         if (!target) return addCopilotMessage('ai', `⚠️ Colaborador '${args.nome}' não encontrado.`);
 
-        await db.from('colaboradores').delete().eq('id', target.id);
-        await fetchAllFromSupabase('workers');
-        navTo('workers');
-        addCopilotMessage('ai', `🗑️ Colaborador '${target.name}' excluído com sucesso!`);
+        await deleteWorker(target.id);
       }
       // === CRUD OCORRÊNCIAS ===
       else if (functionName === "cadastrar_ocorrencia") {
@@ -1798,10 +1466,7 @@
         const target = QUESTIONS.find(q => q.question_text.toLowerCase().includes(args.descricao.toLowerCase()));
         if (!target) return addCopilotMessage('ai', `⚠️ Ocorrência '${args.descricao}' não encontrada.`);
 
-        await db.from('perguntas_ranking').delete().eq('id', target.id);
-        await fetchAllFromSupabase('questions');
-        navTo('questions');
-        addCopilotMessage('ai', `🗑️ Ocorrência '${target.question_text}' excluída com sucesso!`);
+        await deleteQuestion(target.id);
       }
       // === LANÇAMENTOS ===
       else if (functionName === "salvar_lancamento_semanal") {
@@ -1909,7 +1574,11 @@
 
     async function deleteEvaluation(id) {
       if (confirm("Excluir este lançamento de ocorrência?")) {
-        await db.from('avaliacoes_ranking').delete().eq('id', id);
+        const { error } = await db.from('avaliacoes_ranking').delete().eq('id', id);
+        if (error) {
+          alert("Não foi possível excluir o lançamento: " + error.message);
+          return;
+        }
         await fetchAllFromSupabase('evaluations');
       }
     }
@@ -2036,18 +1705,49 @@
       await fetchAllFromSupabase('questions');
     }
 
+    // EXCLUSÃO SEGURA DE OCORRÊNCIA
     async function deleteQuestion(id) {
-      if (confirm("Excluir esta ocorrência?")) {
-        await db.from('perguntas_ranking').delete().eq('id', id);
+      const q = QUESTIONS.find(item => String(item.id) === String(id));
+      const qName = q ? q.question_text : "";
+
+      // Verifica histórico de lançamentos vinculados a esta ocorrência
+      const { count, error: countErr } = await db
+        .from("avaliacoes_ranking")
+        .select("id", { count: "exact", head: true });
+
+      if (countErr) {
+        alert("Erro de segurança ao consultar o histórico. A ocorrência não será excluída.");
+        return;
+      }
+
+      // Procura ocorrência no histórico de lançamentos carregados na memória
+      const hasHistory = EVALUATIONS.some(e => 
+        Array.isArray(e.answers) && e.answers.some(a => 
+          String(a.question || "").toLowerCase().trim() === String(qName).toLowerCase().trim() && (Number(a.count) || 0) > 0
+        )
+      );
+
+      if (hasHistory) {
+        alert(`A ocorrência "${qName}" já possui lançamentos históricos vinculados. Para preservar a integridade dos dados, ela não pode ser excluída.`);
+        return;
+      }
+
+      if (confirm(`Remover a ocorrência "${qName}"?`)) {
+        const { error } = await db.from('perguntas_ranking').delete().eq('id', id);
+        if (error) {
+          alert("Não foi possível excluir a ocorrência: " + error.message);
+          return;
+        }
         await fetchAllFromSupabase('questions');
+        if (typeof addCopilotMessage === "function") {
+          addCopilotMessage('ai', `🗑️ Ocorrência '${qName}' excluída com sucesso!`);
+        }
       }
     }
 
     // BÔNUS
     function getEvaluationPeriodStart(evaluation) {
       const text = String(evaluation?.period_dates || "");
-
-      // Preferimos a data do período, pois ela representa o período de referência.
       const match = text.match(/\b(\d{1,2})\/(\d{1,2})\/(\d{4})\b/);
 
       if (match) {
@@ -2059,8 +1759,6 @@
         if (!Number.isNaN(date.getTime())) return date;
       }
 
-      // Fallback somente para registros antigos que não tenham uma data
-      // de período parseável.
       if (evaluation?.createdAt instanceof Date && !Number.isNaN(evaluation.createdAt.getTime())) {
         return evaluation.createdAt;
       }
@@ -2075,15 +1773,12 @@
 
     function getAvailableBonusYears() {
       const years = new Set();
-
       EVALUATIONS.forEach(e => {
         const year = getEvaluationReferenceYear(e);
         if (year) years.add(year);
       });
 
-      const currentYear = new Date().getFullYear();
-      years.add(currentYear);
-
+      years.add(new Date().getFullYear());
       return [...years].sort((a, b) => a - b);
     }
 
@@ -2095,7 +1790,6 @@
       const years = getAvailableBonusYears();
 
       select.innerHTML = "";
-
       years.forEach(year => {
         const option = document.createElement("option");
         option.value = String(year);
@@ -2120,29 +1814,12 @@
       populateBonusYears(selectedYear);
 
       const finalYear = Number(select?.value || selectedYear);
-
       document.getElementById("apuracaoYearTitle").innerText = `Ano: ${finalYear}`;
 
       const tbody = document.getElementById("apuracaoTableBody");
       tbody.innerHTML = "";
 
-      /*
-       * REGRA DE NEGÓCIO:
-       *
-       * A tela de Bônus não parte da tabela de colaboradores.
-       * Ela parte dos LANÇAMENTOS daquele período.
-       *
-       * Portanto:
-       * - colaborador sem lançamento no ano NÃO aparece;
-       * - colaborador lançado em 2025 aparece em 2025;
-       * - o mesmo colaborador pode aparecer em 2026 se houver
-       *   lançamento em 2026;
-       * - cadastro do colaborador, sozinho, não gera bônus.
-       */
-      const yearEvals = EVALUATIONS.filter(e =>
-        getEvaluationReferenceYear(e) === finalYear
-      );
-
+      const yearEvals = EVALUATIONS.filter(e => getEvaluationReferenceYear(e) === finalYear);
       const workerMap = {};
 
       yearEvals.forEach(e => {
@@ -2168,7 +1845,6 @@
       });
 
       const list = Object.values(workerMap);
-
       let totalUSDAll = 0;
 
       if (list.length === 0) {
@@ -2181,14 +1857,8 @@
         `;
       } else {
         list.forEach(item => {
-          const remainingPoints = Math.max(
-            0,
-            GLOBAL_CONFIG.initialPoints - item.totalPenalty
-          );
-
-          const finalUSD =
-            remainingPoints * GLOBAL_CONFIG.pointValue;
-
+          const remainingPoints = Math.max(0, GLOBAL_CONFIG.initialPoints - item.totalPenalty);
+          const finalUSD = remainingPoints * GLOBAL_CONFIG.pointValue;
           totalUSDAll += finalUSD;
 
           const tr = document.createElement("tr");
@@ -2208,8 +1878,7 @@
         });
       }
 
-      document.getElementById("apurTotalNet").innerText =
-        `$${totalUSDAll.toFixed(2)}`;
+      document.getElementById("apurTotalNet").innerText = `$${totalUSDAll.toFixed(2)}`;
     }
 
     // PARÂMETROS
@@ -2280,68 +1949,42 @@
       await fetchAllFromSupabase('workers');
     }
 
+    // EXCLUSÃO SEGURA DE AVALIADO
     async function deleteWorker(id) {
-      if (confirm("Remover este avaliado?")) {
-        await db.from('colaboradores').delete().eq('id', id);
+      const targetWorker = WORKERS.find(w => String(w.id) === String(id));
+      const workerName = targetWorker ? targetWorker.name : "";
+
+      // Checa se o colaborador possui lançamentos históricos
+      const { count, error: countErr } = await db
+        .from("avaliacoes_ranking")
+        .select("id", { count: "exact", head: true })
+        .ilike("worker_name", workerName);
+
+      if (countErr) {
+        alert("Erro de segurança ao verificar histórico do colaborador. A exclusão foi cancelada.");
+        return;
+      }
+
+      if (count > 0) {
+        alert(`O colaborador "${workerName}" possui ${count} lançamento(s) registrado(s). Para preservar o histórico do sistema, ele não pode ser excluído.`);
+        return;
+      }
+
+      if (confirm(`Remover permanentemente o avaliado "${workerName}"?`)) {
+        const { error } = await db.from('colaboradores').delete().eq('id', id);
+        if (error) {
+          alert("Não foi possível excluir o colaborador: " + error.message);
+          return;
+        }
         await fetchAllFromSupabase('workers');
+        if (typeof addCopilotMessage === "function") {
+          addCopilotMessage('ai', `🗑️ Colaborador '${workerName}' excluído com sucesso!`);
+        }
       }
     }
-
-
-
-    // ============================================================
-    // COPILOT VISIBILITY / AUTH STATE
-    // O Copilot só existe visualmente para usuários autenticados.
-    // ============================================================
-
-    function setCopilotVisibility(isAuthenticated) {
-      const widget = document.getElementById("aiCopilotWidget");
-      if (!widget) return;
-
-      document.body.classList.toggle("robust-authenticated", !!isAuthenticated);
-
-      if (isAuthenticated) {
-        widget.style.removeProperty("display");
-        widget.style.removeProperty("visibility");
-      } else {
-        widget.style.setProperty("display", "none");
-        widget.style.setProperty("visibility", "hidden");
-      }
-
-      widget.setAttribute("aria-hidden", isAuthenticated ? "false" : "true");
-
-      // Segurança UX: se a sessão terminou, feche o painel do Copilot.
-      if (!isAuthenticated) {
-        const panel = document.getElementById("copilotChatBox");
-        if (panel) panel.classList.add("hidden");
-
-        const help = document.getElementById("copilotHelpPanel");
-        if (help) help.classList.add("hidden");
-      }
-    }
-
-    async function syncCopilotWithAuth() {
-      try {
-        const { data } = await db.auth.getSession();
-        setCopilotVisibility(!!data?.session?.user);
-      } catch (err) {
-        console.error("Erro ao sincronizar visibilidade do Copilot:", err);
-        setCopilotVisibility(false);
-      }
-    }
-
-
-    // Mantém o Copilot sincronizado com login, logout, refresh e expiração de sessão.
-    db.auth.onAuthStateChange((event, session) => {
-      setCopilotVisibility(!!session?.user);
-    });
-
-    // Estado inicial (inclusive após refresh com sessão persistida).
-    syncCopilotWithAuth();
-
   </script>
 
-  <div id="appVersionFooter" class="fixed bottom-1 left-1/2 -translate-x-1/2 z-[60] px-2 py-1 rounded-full bg-slate-900/75 backdrop-blur-sm border border-slate-700/50 text-[9px] font-bold tracking-wide text-slate-400 pointer-events-none select-none no-print">RobustConstructions · v3.11</div>
+  <div id="appVersionFooter" class="fixed bottom-1 left-1/2 -translate-x-1/2 z-[60] px-2 py-1 rounded-full bg-slate-900/75 backdrop-blur-sm border border-slate-700/50 text-[9px] font-bold tracking-wide text-slate-400 pointer-events-none select-none no-print">RobustConstructions · v3.13</div>
 
 </body>
 </html>
