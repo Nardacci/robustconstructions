@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>RobustConstructions - Gestão de Bônus & Ocorrências</title>
+  <title>RobustConstructions - Gestão de Bônus & Robust Copilot IA</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -14,12 +14,50 @@
     @media print {
       body { background: white !important; color: black !important; padding: 0 !important; }
       .no-print { display: none !important; }
-      header, button { display: none !important; }
+      header, button, #aiCopilotWidget { display: none !important; }
       .shadow-xl, .shadow-lg, .shadow-md, .shadow-sm { box-shadow: none !important; border: 1px solid #ccc !important; }
     }
+
+    /* ================= COPILOT IA V3 — UI ================= */
+    .copilot-shell { backdrop-filter: blur(18px); }
+    .copilot-glow { box-shadow: 0 18px 60px rgba(15, 23, 42, .42), 0 0 0 1px rgba(245, 158, 11, .16); }
+    .copilot-message { animation: copilotIn .18s ease-out; }
+    @keyframes copilotIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
+    .copilot-help { animation: helpIn .15s ease-out; transform-origin: bottom right; }
+    @keyframes helpIn { from { opacity: 0; transform: scale(.96) translateY(5px); } to { opacity: 1; transform: scale(1) translateY(0); } }
+    .copilot-chip { transition: transform .15s ease, background-color .15s ease, border-color .15s ease; }
+    .copilot-chip:hover { transform: translateY(-1px); }
+    .copilot-scroll::-webkit-scrollbar { width: 6px; }
+    .copilot-scroll::-webkit-scrollbar-track { background: transparent; }
+    .copilot-scroll::-webkit-scrollbar-thumb { background: #334155; border-radius: 999px; }
+    .copilot-pulse { animation: copilotPulse 2s infinite; }
+    @keyframes copilotPulse { 0%,100% { box-shadow: 0 0 0 0 rgba(245,158,11,.25); } 50% { box-shadow: 0 0 0 10px rgba(245,158,11,0); } }
+  
+    .copilot-example {
+      width: 100%;
+      text-align: left;
+      padding: .6rem .7rem;
+      border-radius: .7rem;
+      border: 1px solid rgba(71,85,105,.75);
+      background: rgba(30,41,59,.8);
+      color: #cbd5e1;
+      font-size: 10px;
+      font-weight: 700;
+      transition: all .15s ease;
+    }
+    .copilot-example:hover {
+      border-color: rgba(245,158,11,.8);
+      background: rgba(245,158,11,.12);
+      color: #fbbf24;
+      transform: translateX(2px);
+    }
+    #copilotChatBox {
+      position: relative;
+    }
+
   </style>
 </head>
-<body class="bg-slate-100 text-slate-800 font-sans min-h-screen">
+<body class="bg-slate-100 text-slate-800 font-sans min-h-screen relative">
 
   <!-- ================= TELA 1: LOGIN ================= -->
   <div id="viewLogin" class="page-view flex min-h-screen items-center justify-center p-4">
@@ -43,7 +81,7 @@
           </svg>
         </div>
         <h1 class="text-xl font-black text-white tracking-tight">Gestão de Bônus & Ocorrências</h1>
-        <p class="text-xs text-slate-400 font-medium mt-1">Sistema de Abatimento por Desconto Semanal</p>
+        <p class="text-xs text-slate-400 font-medium mt-1">Sistema de Abatimento com Copilot IA Global</p>
       </div>
       
       <form onsubmit="handleLogin(event)" class="p-8 space-y-5">
@@ -72,7 +110,7 @@
 
   <!-- CONTAINER PRINCIPAL -->
   <div id="appContainer" class="hidden min-h-screen flex flex-col">
-    <header class="bg-slate-900 text-white p-4 md:px-8 border-b-4 border-amber-500 sticky top-0 z-50 shadow-md no-print">
+    <header class="bg-slate-900 text-white p-4 md:px-8 border-b-4 border-amber-500 sticky top-0 z-40 shadow-md no-print">
       <div class="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-4">
         <div class="flex items-center gap-3">
           <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 280 65" class="h-10 w-auto">
@@ -122,11 +160,32 @@
       </div>
     </header>
 
-    <div class="max-w-7xl mx-auto w-full p-4 md:p-6 flex-1">
+    <div class="max-w-7xl mx-auto w-full p-4 md:p-6 flex-1 mb-20">
 
-      <!-- ================= TELA 2: DASHBOARD GERENCIAL COMPLETO ================= -->
+      <!-- ================= TELA 2: DASHBOARD GERENCIAL ================= -->
       <main id="viewDashboard" class="page-view space-y-6">
-        <!-- LINHA 1: KPIS PRINCIPAIS -->
+
+      <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 border-b border-slate-200 pb-3">
+        <div>
+          <h2 class="text-lg font-black text-slate-900 flex items-center gap-2">
+            <i class="fa-solid fa-chart-line text-amber-500"></i> Dashboard
+          </h2>
+          <p class="text-xs text-slate-500">
+            Indicadores consolidados a partir dos lançamentos do período selecionado.
+          </p>
+        </div>
+        <div class="flex items-center gap-2">
+          <label for="dashboardYear" class="text-xs font-bold text-slate-600">Ano de Referência:</label>
+          <select id="dashboardYear"
+                  onchange="renderDashboard()"
+                  class="bg-white border border-slate-300 rounded-xl px-3 py-2 text-xs font-bold text-slate-800 outline-none focus:ring-2 focus:ring-amber-500">
+          </select>
+          <span id="dashboardYearStatus"
+                class="hidden md:inline text-[10px] font-semibold text-slate-400"></span>
+        </div>
+      </div>
+
+
         <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
           <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm flex items-center gap-4">
             <div class="bg-amber-50 text-amber-600 p-3.5 rounded-xl text-2xl"><i class="fa-solid fa-shield-halved"></i></div>
@@ -158,7 +217,6 @@
           </div>
         </div>
 
-        <!-- LINHA 2: CARDS DE DESTAQUES INDIVIDUAIS E EFICIÊNCIA -->
         <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
           <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm flex items-center gap-4">
             <div class="bg-emerald-50 text-emerald-600 p-3.5 rounded-xl text-xl"><i class="fa-solid fa-trophy"></i></div>
@@ -188,28 +246,25 @@
           </div>
         </div>
 
-        <!-- LINHA 3: GRÁFICOS ANALÍTICOS (LADO A LADO) -->
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <!-- GRÁFICO 1: SALDO DE PONTOS POR AVALIADO -->
           <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm space-y-4">
             <div class="flex justify-between items-center border-b border-slate-100 pb-3">
               <h3 class="text-xs font-bold uppercase tracking-wider text-slate-700 flex items-center gap-2">
                 <i class="fa-solid fa-chart-bar text-amber-500"></i> Saldo Restante por Avaliado
               </h3>
-              <span class="text-[10px] text-slate-400 font-semibold">Teto Inicial - Ocorrências</span>
+              <span class="text-[10px] text-slate-400 font-semibold">Teto Inicial - Lançamentos do ano</span>
             </div>
             <div class="h-72 relative w-full">
               <canvas id="rankingChart"></canvas>
             </div>
           </div>
 
-          <!-- GRÁFICO 2: TOP OCORRÊNCIAS MAIS FREQUENTES -->
           <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm space-y-4">
             <div class="flex justify-between items-center border-b border-slate-100 pb-3">
               <h3 class="text-xs font-bold uppercase tracking-wider text-slate-700 flex items-center gap-2">
                 <i class="fa-solid fa-fire text-rose-500"></i> Ocorrências Mais Frequentes (Top 5)
               </h3>
-              <span class="text-[10px] text-slate-400 font-semibold">Volume de Faltas/Desvios</span>
+              <span class="text-[10px] text-slate-400 font-semibold">Volume de ocorrências lançadas no ano</span>
             </div>
             <div class="h-72 relative w-full">
               <canvas id="occurrencesChart"></canvas>
@@ -226,7 +281,7 @@
             <p class="text-xs text-slate-500">Consulte, pesquise, edite e registre as ocorrências semanais da equipe.</p>
           </div>
           <button onclick="openNewEvalForm()" class="bg-amber-500 hover:bg-amber-600 text-slate-950 font-bold px-4 py-2.5 rounded-xl text-xs shadow flex items-center gap-2">
-            <i class="fa-solid fa-plus"></i> Novo Lançamento
+            <i class="fa-solid fa-plus"></i> Novo Lançamento Manual
           </button>
         </div>
 
@@ -294,9 +349,11 @@
           <div class="flex items-center gap-3">
             <label class="text-xs font-bold text-slate-600">Ano de Referência:</label>
             <select id="apuracaoYear" onchange="renderApuracao()" class="bg-white border border-slate-300 rounded-xl px-3 py-2 text-xs font-bold text-slate-800 outline-none focus:ring-2 focus:ring-amber-500">
-              <option value="2026" selected>2026</option>
+              <option value="2024">2024</option>
               <option value="2025">2025</option>
+              <option value="2026" selected>2026</option>
               <option value="2027">2027</option>
+              <option value="2028">2028</option>
             </select>
             <button onclick="window.print()" class="bg-slate-900 hover:bg-slate-800 text-white font-bold px-4 py-2 rounded-xl text-xs shadow flex items-center gap-2">
               <i class="fa-solid fa-print"></i> Imprimir / PDF
@@ -401,11 +458,54 @@
     </div>
   </div>
 
-  <!-- MODAL DE LANÇAMENTO SEMANAL -->
+  <!-- ================= ROBUST COPILOT IA V3 ================= -->
+  <div id="aiCopilotWidget" class="fixed bottom-5 right-5 z-50 flex flex-col items-end gap-3 no-print">
+    <div id="copilotChatBox" class="hidden w-[min(94vw,430px)] bg-slate-950/95 text-white rounded-3xl border border-slate-700 copilot-glow copilot-shell overflow-hidden flex flex-col">
+      <div class="px-4 py-3.5 bg-gradient-to-r from-slate-900 via-slate-900 to-slate-800 border-b border-slate-700">
+        <div class="flex items-center justify-between gap-3">
+          <div class="flex items-center gap-3 min-w-0">
+            <div class="relative w-10 h-10 shrink-0 rounded-2xl bg-amber-500/10 border border-amber-400/30 flex items-center justify-center text-amber-400"><i class="fa-solid fa-brain text-lg"></i><span class="absolute -right-0.5 -bottom-0.5 w-2.5 h-2.5 rounded-full bg-emerald-400 border-2 border-slate-900"></span></div>
+            <div class="min-w-0"><div class="flex items-center gap-2"><span id="copilotDisplayName" class="text-sm font-black text-white truncate">Robust Copilot</span><span class="px-1.5 py-0.5 rounded-md bg-amber-400/10 text-amber-300 text-[9px] font-black uppercase tracking-wider border border-amber-400/20">IA</span></div><div class="text-[10px] text-slate-400 font-semibold">Assistente operacional do sistema</div></div>
+          </div>
+          <div class="flex items-center gap-1">
+            <button onclick="toggleCopilotHelp()" aria-label="Ver exemplos de comandos" title="Exemplos de comandos" class="w-8 h-8 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white border border-slate-700 flex items-center justify-center transition"><i class="fa-solid fa-circle-question text-xs"></i></button>
+            <button onclick="toggleCopilotBox()" aria-label="Fechar Copilot" title="Fechar" class="w-8 h-8 rounded-xl bg-slate-800 hover:bg-rose-600/80 text-slate-300 hover:text-white border border-slate-700 flex items-center justify-center transition"><i class="fa-solid fa-xmark text-xs"></i></button>
+          </div>
+        </div>
+      </div>
+      <div id="copilotHelpPanel" class="hidden absolute left-3 right-3 top-[74px] z-40 copilot-help rounded-2xl border border-amber-400/20 bg-slate-950/98 p-3.5 shadow-2xl max-h-[340px] overflow-y-auto">
+        <div class="flex items-start gap-2 mb-3"><div class="w-7 h-7 rounded-lg bg-amber-400/10 text-amber-300 flex items-center justify-center shrink-0"><i class="fa-solid fa-lightbulb text-xs"></i></div><div><div class="text-[11px] font-black uppercase tracking-wider text-amber-300">Como falar com a IA</div><div class="text-[10px] text-slate-400 mt-0.5">Escreva naturalmente. Você não precisa decorar comandos.</div></div></div>
+        <div class="space-y-2">
+          <button onclick="useCopilotExample('Cadastre o colaborador Carlos Silva, Pedreiro')" class="w-full text-left p-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 border border-slate-700 copilot-chip"><span class="block text-[9px] font-black uppercase text-slate-500 mb-0.5">Colaborador</span><span class="text-[11px] font-semibold text-slate-200">“Cadastre o colaborador Carlos Silva, Pedreiro”</span></button>
+          <button onclick="useCopilotExample('Inclua a ocorrência EPI com 30 pontos')" class="w-full text-left p-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 border border-slate-700 copilot-chip"><span class="block text-[9px] font-black uppercase text-slate-500 mb-0.5">Ocorrência</span><span class="text-[11px] font-semibold text-slate-200">“Inclua a ocorrência EPI com 30 pontos”</span></button>
+          <button onclick="useCopilotExample('Edite a ocorrência EPI para 20 pontos')" class="w-full text-left p-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 border border-slate-700 copilot-chip"><span class="block text-[9px] font-black uppercase text-slate-500 mb-0.5">Edição</span><span class="text-[11px] font-semibold text-slate-200">“Edite a ocorrência EPI para 20 pontos”</span></button>
+          <button onclick="useCopilotExample('Abra a tela de avaliados')" class="w-full text-left p-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 border border-slate-700 copilot-chip"><span class="block text-[9px] font-black uppercase text-slate-500 mb-0.5">Navegação</span><span class="text-[11px] font-semibold text-slate-200">“Abra a tela de avaliados”</span></button>
+          <button onclick="useCopilotExample('Abra o Dashboard do ano 2025')" class="copilot-example">Abra o Dashboard do ano 2025</button>
+              <button onclick="useCopilotExample('Exclua o lançamento do Carlos Silva de 24/08/2026 a 30/08/2026')" class="copilot-example">Exclua o lançamento do Carlos Silva de 24/08/2026 a 30/08/2026</button>
+              <button onclick="useCopilotExample('Abra a tela de Bônus')" class="w-full text-left p-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 border border-slate-700 copilot-chip"><span class="block text-[9px] font-black uppercase text-slate-500 mb-0.5">Bônus</span><span class="text-[11px] font-semibold text-slate-200">“Abra a tela de Bônus”</span></button>
+          <button onclick="useCopilotExample('Abra a tela de Bônus do ano 2025')" class="w-full text-left p-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 border border-slate-700 copilot-chip"><span class="block text-[9px] font-black uppercase text-slate-500 mb-0.5">Bônus por ano</span><span class="text-[11px] font-semibold text-slate-200">“Abra a tela de Bônus do ano 2025”</span></button>
+        </div>
+      </div>
+      <div class="px-4 py-2.5 bg-slate-900/80 border-b border-slate-800 flex items-center justify-between"><div class="flex items-center gap-2"><span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span><span class="text-[10px] font-bold text-slate-400">Pronto para receber comandos</span></div><span class="text-[9px] font-black uppercase tracking-wider text-slate-600">Copilot Engine</span></div>
+      
+      <div id="copilotMessages" class="copilot-scroll p-4 h-[300px] overflow-y-auto space-y-3 text-xs bg-slate-950">
+        <div class="copilot-message bg-gradient-to-br from-slate-900 to-slate-800 p-3.5 rounded-2xl border border-slate-800"><div class="flex items-start gap-2.5"><div class="w-7 h-7 rounded-lg bg-amber-500/10 border border-amber-400/20 text-amber-300 flex items-center justify-center shrink-0"><i class="fa-solid fa-sparkles text-[11px]"></i></div><div><div class="font-black text-slate-200 mb-1">Olá! Sou seu Copilot.</div><div class="text-[11px] leading-relaxed text-slate-400">Posso navegar pelo sistema e executar comandos de cadastro, edição e exclusão. Clique no <strong class="text-amber-300">?</strong> para ver exemplos.</div></div></div></div>
+      </div>
+      <div class="px-3 pt-2 pb-1 bg-slate-950 border-t border-slate-800"><div class="flex gap-2 overflow-x-auto pb-2">
+        <button onclick="useCopilotExample('Cadastre o colaborador Carlos Silva, Pedreiro')" class="copilot-chip shrink-0 px-2.5 py-1.5 rounded-lg bg-slate-900 border border-slate-700 text-[10px] font-bold text-slate-300 hover:text-amber-300">+ Colaborador</button>
+        <button onclick="useCopilotExample('Inclua a ocorrência EPI com 30 pontos')" class="copilot-chip shrink-0 px-2.5 py-1.5 rounded-lg bg-slate-900 border border-slate-700 text-[10px] font-bold text-slate-300 hover:text-amber-300">+ Ocorrência</button>
+        <button onclick="useCopilotExample('Abra a tela de avaliados')" class="copilot-chip shrink-0 px-2.5 py-1.5 rounded-lg bg-slate-900 border border-slate-700 text-[10px] font-bold text-slate-300 hover:text-amber-300">Ir para Avaliados</button>
+      </div></div>
+      <div class="p-3 bg-slate-950 flex items-end gap-2"><div class="flex-1 relative"><textarea id="copilotInputText" rows="1" placeholder="Digite o que você quer fazer..." onkeydown="handleCopilotKeydown(event)" class="w-full resize-none bg-slate-900 border border-slate-700 rounded-2xl pl-3 pr-11 py-2.5 text-xs font-semibold text-slate-200 outline-none focus:border-amber-500 focus:ring-2 focus:ring-amber-500/10 placeholder:text-slate-600"></textarea><button onclick="toggleCopilotVoice()" title="Falar com o Copilot" aria-label="Falar com o Copilot" class="absolute right-2 bottom-2 w-7 h-7 rounded-lg text-slate-400 hover:text-amber-300 hover:bg-slate-800 flex items-center justify-center transition"><i class="fa-solid fa-microphone text-[11px]"></i></button></div><button id="btnCopilotSend" onclick="sendCopilotText()" title="Enviar comando" aria-label="Enviar comando" class="w-10 h-10 rounded-2xl bg-amber-500 hover:bg-amber-400 text-slate-950 flex items-center justify-center shadow-lg shadow-amber-500/10 transition transform hover:scale-[1.03]"><i class="fa-solid fa-arrow-up text-sm"></i></button></div>
+    </div>
+    <button id="btnGlobalVoice" onclick="toggleCopilotBox()" aria-label="Abrir Robust Copilot" title="Abrir Robust Copilot" class="copilot-pulse group bg-slate-950 hover:bg-slate-900 text-white p-3 rounded-2xl shadow-2xl border border-amber-400/50 flex items-center gap-2.5 transition transform hover:scale-105"><div class="w-9 h-9 rounded-xl bg-amber-500 text-slate-950 flex items-center justify-center"><i class="fa-solid fa-brain"></i></div><div class="hidden md:block text-left pr-1"><div class="text-[9px] font-black uppercase tracking-wider text-amber-300">Assistente IA</div><div id="launcherName" class="text-xs font-black text-white">Robust Copilot</div></div></button>
+  </div>
+
+  <!-- MODAIS AUXILIARES DE FORMULÁRIOS -->
   <div id="evalModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm hidden flex items-center justify-center p-4 z-50 overflow-y-auto">
     <div class="bg-white rounded-2xl shadow-xl border border-slate-200 max-w-3xl w-full p-6 space-y-4 my-8">
       <div class="flex justify-between items-center border-b pb-3">
-        <h3 class="font-black text-slate-900 text-sm flex items-center gap-2"><i class="fa-solid fa-clipboard-list text-amber-500"></i> Formulario de Lançamento de Ocorrências</h3>
+        <h3 class="font-black text-slate-900 text-sm flex items-center gap-2"><i class="fa-solid fa-clipboard-list text-amber-500"></i> Formulário de Lançamento de Ocorrências</h3>
         <button onclick="closeEvalModal()" class="text-slate-400 hover:text-slate-600"><i class="fa-solid fa-xmark text-lg"></i></button>
       </div>
 
@@ -459,7 +559,6 @@
     </div>
   </div>
 
-  <!-- MODAL OCORRÊNCIA E TRABALHADOR -->
   <div id="questionModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm hidden flex items-center justify-center p-4 z-50">
     <div class="bg-white rounded-2xl shadow-xl border border-slate-200 max-w-md w-full p-6 space-y-4">
       <div class="flex justify-between items-center border-b pb-3">
@@ -508,20 +607,33 @@
 
   <script>
     const SUPABASE_URL = "https://smfqmmjnoqarpxknjirl.supabase.co";
-    const SUPABASE_ANON_KEY = "sb_publishable_PnKIn_AgcuuyR9tE-hXhiw_TBzbqopl";
+    const SUPABASE_PUBLISHABLE_KEY = "sb_publishable_PnKIn_AgcuuyR9tE-hXhiw_TBzbqopl";
     
-    const db = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+    // ============================================================
+    // CONFIGURAÇÃO DO COPILOT IA — V3 SEGURA
+    // ============================================================
+    // A chave Gemini NÃO fica mais neste HTML.
+    // O navegador chama uma Supabase Edge Function autenticada,
+    // e a Edge Function guarda GEMINI_API_KEY como secret de servidor.
+    const COPILOT_FUNCTION_NAME = "robust-copilot";
+    const COPILOT_DISPLAY_NAME = "Robust Copilot";
+
+    const db = supabase.createClient(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY);
 
     let currentEditingId = null;
     let editingQuestionId = null;
     let editingWorkerId = null;
     let chartInstance = null;
     let occurrencesChartInstance = null;
+    let currentView = "dashboard";
 
     let GLOBAL_CONFIG = { initialPoints: 500, pointValue: 1.00 };
     let QUESTIONS = [];
     let WORKERS = [];
     let EVALUATIONS = [];
+
+    document.getElementById("copilotDisplayName")?.replaceChildren(document.createTextNode(COPILOT_DISPLAY_NAME));
+    document.getElementById("launcherName")?.replaceChildren(document.createTextNode(COPILOT_DISPLAY_NAME));
 
     async function handleLogin(e) {
       e.preventDefault();
@@ -545,7 +657,7 @@
       document.getElementById("viewLogin").classList.add("hidden");
       document.getElementById("appContainer").classList.remove("hidden");
       
-      await fetchAllFromSupabase();
+      await fetchAllFromSupabase("all");
       navTo("dashboard");
     }
 
@@ -557,38 +669,110 @@
       document.getElementById("viewLogin").classList.remove("hidden");
     }
 
-    async function fetchAllFromSupabase() {
-      const { data: gData } = await db.from('parametros_globais').select('*').eq('id', 1).single();
-      if (gData) {
-        GLOBAL_CONFIG.initialPoints = parseFloat(gData.initial_points || 500);
-        GLOBAL_CONFIG.pointValue = parseFloat(gData.point_value || 1.00);
+    async function fetchAllFromSupabase(scope = "all") {
+      /*
+       * PERFORMANCE:
+       * - Consultas independentes são executadas em paralelo.
+       * - Cada operação busca somente as colunas realmente usadas.
+       * - Após um CRUD, atualizamos somente o conjunto afetado.
+       * - Navegar entre telas NÃO dispara nova consulta ao banco.
+       */
+      const tasks = [];
+
+      if (scope === "all" || scope === "config") {
+        tasks.push(
+          db.from("parametros_globais")
+            .select("id, initial_points, point_value")
+            .eq("id", 1)
+            .single()
+            .then(({ data }) => {
+              if (data) {
+                GLOBAL_CONFIG.initialPoints = parseFloat(data.initial_points || 500);
+                GLOBAL_CONFIG.pointValue = parseFloat(data.point_value || 1.00);
+              }
+            })
+        );
       }
 
-      const { data: qData } = await db.from('perguntas_ranking').select('*').order('created_at');
-      if (qData) QUESTIONS = qData;
-
-      const { data: wData } = await db.from('colaboradores').select('*').order('name');
-      if (wData) WORKERS = wData;
-
-      const { data: eData } = await db.from('avaliacoes_ranking').select('*').order('created_at', { ascending: false });
-      if (eData) {
-        EVALUATIONS = eData.map(e => ({
-          ...e,
-          totalScore: parseFloat(e.total_score),
-          createdAt: new Date(e.created_at)
-        }));
+      if (scope === "all" || scope === "questions") {
+        tasks.push(
+          db.from("perguntas_ranking")
+            .select("id, question_text, penalty_points, points_per_occurrence, created_at")
+            .order("created_at")
+            .then(({ data }) => {
+              if (data) QUESTIONS = data || [];
+            })
+        );
       }
 
-      populateWorkerSelect();
-      renderDashboard();
-      renderEvaluationsGrid();
-      renderQuestionsTable();
-      renderWorkersTable();
-      renderApuracao();
-      renderConfigFields();
+      if (scope === "all" || scope === "workers") {
+        tasks.push(
+          db.from("colaboradores")
+            .select("id, name, role")
+            .order("name")
+            .then(({ data }) => {
+              if (data) WORKERS = data || [];
+            })
+        );
+      }
+
+      if (scope === "all" || scope === "evaluations") {
+        tasks.push(
+          db.from("avaliacoes_ranking")
+            .select("id, worker_name, role, period_dates, evaluator, total_score, answers, created_at")
+            .order("created_at", { ascending: false })
+            .then(({ data }) => {
+              if (data) {
+                EVALUATIONS = data.map(e => ({
+                  ...e,
+                  totalScore: parseFloat(e.total_score),
+                  createdAt: new Date(e.created_at)
+                }));
+              }
+            })
+        );
+      }
+
+      await Promise.all(tasks);
+
+      if (scope === "all" || scope === "workers") {
+        populateWorkerSelect();
+      }
+
+      // Renderiza somente a tela que realmente precisa ser atualizada.
+      if (scope === "all" || scope === "config") {
+        renderConfigFields();
+      }
+
+      if (scope === "all" || scope === "questions") {
+        if (currentView === "questions" || scope === "all") {
+          renderQuestionsTable();
+        }
+      }
+
+      if (scope === "all" || scope === "workers") {
+        if (currentView === "workers" || scope === "all") {
+          renderWorkersTable();
+        }
+      }
+
+      if (scope === "all" || scope === "evaluations" || scope === "config") {
+        renderDashboard();
+        populateBonusYears();
+        if (currentView === "apuracao" || scope === "all") {
+          renderApuracao();
+        }
+      }
+
+      if (scope === "all" || scope === "evaluations") {
+        if (currentView === "evaluations" || scope === "all") {
+          renderEvaluationsGrid();
+        }
+      }
     }
 
     function navTo(view) {
+      currentView = view;
       document.getElementById("viewDashboard").classList.add("hidden");
       document.getElementById("viewEvaluations").classList.add("hidden");
       document.getElementById("viewQuestions").classList.add("hidden");
@@ -643,133 +827,925 @@
       document.getElementById("evalPeriodDates").value = `${formatDate(start)} à ${formatDate(end)}`;
     }
 
-    // DASHBOARD GERENCIAL
+    // DASHBOARD
     function renderDashboard() {
-      document.getElementById("dashInitialPointsCard").innerText = `${GLOBAL_CONFIG.initialPoints} pts`;
+      /*
+       * REGRA DE NEGÓCIO DO DASHBOARD
+       *
+       * O Dashboard NÃO parte do cadastro de colaboradores.
+       * Ele parte exclusivamente dos LANÇAMENTOS (EVALUATIONS)
+       * do ANO DE REFERÊNCIA selecionado.
+       *
+       * Portanto:
+       * - colaborador cadastrado sem lançamento NÃO aparece;
+       * - métricas contam somente lançamentos do ano;
+       * - gráficos usam somente colaboradores com lançamento;
+       * - projeção de bônus considera somente colaboradores lançados;
+       * - ocorrência sem lançamento no ano não entra nas métricas.
+       */
+
+      document.getElementById("dashInitialPointsCard").innerText =
+        `${GLOBAL_CONFIG.initialPoints} pts`;
+
+      // Popula o seletor do Dashboard com os anos que realmente possuem lançamentos.
+      populateDashboardYears();
+
+      const dashboardSelect =
+        document.getElementById("dashboardYear");
+
+      const selectedYear = Number(
+        dashboardSelect?.value || new Date().getFullYear()
+      );
+
+      const dashboardYearStatus =
+        document.getElementById("dashboardYearStatus");
+
+      if (dashboardYearStatus) {
+        const hasYearLaunches = EVALUATIONS.some(e =>
+          getEvaluationReferenceYear(e) === selectedYear
+        );
+
+        dashboardYearStatus.innerText =
+          hasYearLaunches
+            ? "Lançamentos do período"
+            : "Nenhum lançamento neste ano";
+
+        dashboardYearStatus.classList.toggle(
+          "text-rose-500",
+          !hasYearLaunches
+        );
+        dashboardYearStatus.classList.toggle(
+          "text-slate-400",
+          hasYearLaunches
+        );
+      }
+
 
       let totalPenaltyAll = 0;
       const workerSummary = {};
       const occurrenceCounts = {};
 
-      WORKERS.forEach(w => {
-        workerSummary[w.name] = { name: w.name, totalPenalty: 0 };
-      });
+      // Somente lançamentos do ano selecionado.
+      const yearEvals = EVALUATIONS.filter(e =>
+        getEvaluationReferenceYear(e) === selectedYear
+      );
 
-      EVALUATIONS.forEach(e => {
-        totalPenaltyAll += e.totalScore;
-        if (workerSummary[e.worker_name]) {
-          workerSummary[e.worker_name].totalPenalty += e.totalScore;
+      // O trabalhador entra no Dashboard SOMENTE se existir lançamento.
+      yearEvals.forEach(e => {
+        const workerName = String(e.worker_name || "").trim();
+
+        if (!workerName) return;
+
+        if (!workerSummary[workerName]) {
+          workerSummary[workerName] = {
+            name: workerName,
+            role: e.role || "",
+            totalPenalty: 0,
+            occurrencesCount: 0
+          };
         }
 
-        if (e.answers && Array.isArray(e.answers)) {
+        const penalty = Number(e.totalScore) || 0;
+
+        workerSummary[workerName].totalPenalty += penalty;
+        totalPenaltyAll += penalty;
+
+        if (Array.isArray(e.answers)) {
           e.answers.forEach(a => {
-            if (a.count > 0) {
-              occurrenceCounts[a.question] = (occurrenceCounts[a.question] || 0) + a.count;
+            const count = Number(a.count) || 0;
+
+            if (count > 0) {
+              const question = String(a.question || "").trim();
+
+              if (question) {
+                occurrenceCounts[question] =
+                  (occurrenceCounts[question] || 0) + count;
+              }
+
+              workerSummary[workerName].occurrencesCount += count;
             }
           });
         }
       });
 
-      document.getElementById("dashTotalCount").innerText = EVALUATIONS.length;
-      document.getElementById("dashTotalPenalty").innerText = `${totalPenaltyAll} pts`;
+      const workerList = Object.values(workerSummary)
+        .map(w => ({
+          ...w,
+          remainingPts: Math.max(
+            0,
+            GLOBAL_CONFIG.initialPoints - w.totalPenalty
+          )
+        }))
+        .sort((a, b) => b.remainingPts - a.remainingPts);
 
-      // CÁLCULO DE PRESERVAÇÃO (LÍDER E ATENÇÃO)
-      const workerList = Object.values(workerSummary).map(w => ({
-        name: w.name,
-        remainingPts: Math.max(0, GLOBAL_CONFIG.initialPoints - w.totalPenalty)
-      })).sort((a, b) => b.remainingPts - a.remainingPts);
+      // Cards principais
+      document.getElementById("dashTotalCount").innerText =
+        yearEvals.length;
 
+      document.getElementById("dashTotalPenalty").innerText =
+        `${totalPenaltyAll} pts`;
+
+      // Líder / alerta
       if (workerList.length > 0) {
-        document.getElementById("dashBestWorker").innerText = workerList[0].name;
-        document.getElementById("dashBestWorkerPts").innerText = `${workerList[0].remainingPts} pts mantidos`;
+        const best = workerList[0];
+
+        document.getElementById("dashBestWorker").innerText =
+          best.name;
+
+        document.getElementById("dashBestWorkerPts").innerText =
+          `${best.remainingPts} pts mantidos`;
 
         const worst = workerList[workerList.length - 1];
-        document.getElementById("dashWorstWorker").innerText = worst.name;
-        document.getElementById("dashWorstWorkerPts").innerText = `${worst.remainingPts} pts mantidos`;
+
+        document.getElementById("dashWorstWorker").innerText =
+          worst.name;
+
+        document.getElementById("dashWorstWorkerPts").innerText =
+          `${worst.remainingPts} pts mantidos`;
+      } else {
+        document.getElementById("dashBestWorker").innerText = "-";
+        document.getElementById("dashBestWorkerPts").innerText =
+          "0 pts mantidos";
+
+        document.getElementById("dashWorstWorker").innerText = "-";
+        document.getElementById("dashWorstWorkerPts").innerText =
+          "0 pts mantidos";
       }
 
-      // TAXA DE RETENÇÃO GLOBAL DE BÔNUS
-      const maxPossibleBonusUSD = WORKERS.length * GLOBAL_CONFIG.initialPoints * GLOBAL_CONFIG.pointValue;
+      /*
+       * Projeção de bônus:
+       * somente os colaboradores que possuem lançamento no ano.
+       */
+      const maxPossibleBonusUSD =
+        workerList.length *
+        GLOBAL_CONFIG.initialPoints *
+        GLOBAL_CONFIG.pointValue;
+
       let totalBonusUSD = 0;
+
       workerList.forEach(w => {
-        totalBonusUSD += (w.remainingPts * GLOBAL_CONFIG.pointValue);
+        totalBonusUSD +=
+          w.remainingPts *
+          GLOBAL_CONFIG.pointValue;
       });
 
-      document.getElementById("dashTotalBonusToPay").innerText = `$${totalBonusUSD.toFixed(2)}`;
+      document.getElementById("dashTotalBonusToPay").innerText =
+        `$${totalBonusUSD.toFixed(2)}`;
 
-      const retentionRate = maxPossibleBonusUSD > 0 ? ((totalBonusUSD / maxPossibleBonusUSD) * 100) : 100;
-      document.getElementById("dashRetentionRate").innerText = `${retentionRate.toFixed(1)}%`;
+      const retentionRate =
+        maxPossibleBonusUSD > 0
+          ? ((totalBonusUSD / maxPossibleBonusUSD) * 100)
+          : 100;
 
+      document.getElementById("dashRetentionRate").innerText =
+        `${retentionRate.toFixed(1)}%`;
+
+      // Gráficos: somente dados de lançamentos do ano.
       renderChart(workerSummary);
       renderOccurrencesChart(occurrenceCounts);
     }
 
-    // GRÁFICO 1: PONTOS RESTANTES
+    function getAvailableDashboardYears() {
+      const years = new Set();
+
+      EVALUATIONS.forEach(e => {
+        const year = getEvaluationReferenceYear(e);
+
+        if (year) {
+          years.add(year);
+        }
+      });
+
+      // O ano atual é útil para permitir consulta mesmo quando ainda
+      // não existe lançamento nele.
+      years.add(new Date().getFullYear());
+
+      return [...years].sort((a, b) => a - b);
+    }
+
+    function populateDashboardYears(preferredYear = null) {
+      const select =
+        document.getElementById("dashboardYear");
+
+      if (!select) return;
+
+      const currentValue =
+        preferredYear ||
+        Number(select.value) ||
+        new Date().getFullYear();
+
+      const years =
+        getAvailableDashboardYears();
+
+      select.innerHTML = "";
+
+      years.forEach(year => {
+        const option =
+          document.createElement("option");
+
+        option.value = String(year);
+        option.textContent = String(year);
+
+        select.appendChild(option);
+      });
+
+      if (!years.includes(Number(currentValue))) {
+        const option =
+          document.createElement("option");
+
+        option.value = String(currentValue);
+        option.textContent = String(currentValue);
+
+        select.appendChild(option);
+      }
+
+      select.value =
+        String(currentValue);
+    }
+
+
+    function setDashboardYear(year) {
+      const select = document.getElementById("dashboardYear");
+      if (!select) return;
+
+      const value = String(year);
+
+      if (![...select.options].some(o => o.value === value)) {
+        const option = document.createElement("option");
+        option.value = value;
+        option.textContent = value;
+        select.appendChild(option);
+      }
+
+      select.value = value;
+      renderDashboard();
+    }
+
     function renderChart(workerSummary) {
       const ctx = document.getElementById('rankingChart');
       if (!ctx) return;
 
       const labels = Object.keys(workerSummary);
-      const remainingData = Object.values(workerSummary).map(w => Math.max(0, GLOBAL_CONFIG.initialPoints - w.totalPenalty));
+      const remainingData = Object.values(workerSummary).map(
+        w => Math.max(0, GLOBAL_CONFIG.initialPoints - w.totalPenalty)
+      );
 
       if (chartInstance) chartInstance.destroy();
 
+      if (labels.length === 0) {
+        chartInstance = new Chart(ctx, {
+          type: 'bar',
+          data: {
+            labels: ['Sem lançamentos'],
+            datasets: [{ data: [0], backgroundColor: '#cbd5e1', borderRadius: 8 }]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: { legend: { display: false } },
+            scales: { y: { beginAtZero: true, max: GLOBAL_CONFIG.initialPoints } }
+          }
+        });
+        return;
+      }
+
       chartInstance = new Chart(ctx, {
         type: 'bar',
-        data: {
-          labels: labels,
-          datasets: [{
-            label: 'Saldo de Pontos Restantes',
-            data: remainingData,
-            backgroundColor: '#10b981',
-            borderRadius: 8
-          }]
-        },
-        options: {
-          responsive: true,
-          maintainAspectRatio: false,
-          plugins: { legend: { display: false } },
-          scales: { y: { beginAtZero: true, max: GLOBAL_CONFIG.initialPoints }, x: { grid: { display: false } } }
-        }
+        data: { labels, datasets: [{ data: remainingData, backgroundColor: '#10b981', borderRadius: 8 }] },
+        options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true, max: GLOBAL_CONFIG.initialPoints } } }
       });
     }
 
-    // GRÁFICO 2: TOP OCORRÊNCIAS
     function renderOccurrencesChart(occurrenceCounts) {
       const ctx = document.getElementById('occurrencesChart');
       if (!ctx) return;
-
-      const sortedOccurrences = Object.entries(occurrenceCounts)
-        .sort((a, b) => b[1] - a[1])
-        .slice(0, 5); // Top 5
-
-      const labels = sortedOccurrences.map(item => item[0]);
-      const counts = sortedOccurrences.map(item => item[1]);
-
+      const sorted = Object.entries(occurrenceCounts).sort((a, b) => b[1] - a[1]).slice(0, 5);
+      const labels = sorted.map(i => i[0]);
+      const counts = sorted.map(i => i[1]);
       if (occurrencesChartInstance) occurrencesChartInstance.destroy();
-
       occurrencesChartInstance = new Chart(ctx, {
         type: 'bar',
-        data: {
-          labels: labels.length > 0 ? labels : ['Sem ocorrências'],
-          datasets: [{
-            label: 'Quantidade de Ocorrências',
-            data: counts.length > 0 ? counts : [0],
-            backgroundColor: '#f43f5e',
-            borderRadius: 8
-          }]
-        },
-        options: {
-          indexAxis: 'y', // Barra horizontal para facilitar a leitura de frases longas
-          responsive: true,
-          maintainAspectRatio: false,
-          plugins: { legend: { display: false } },
-          scales: { x: { beginAtZero: true, ticks: { precision: 0 } }, y: { grid: { display: false } } }
-        }
+        data: { labels: labels.length > 0 ? labels : ['Sem ocorrências'], datasets: [{ data: counts.length > 0 ? counts : [0], backgroundColor: '#f43f5e', borderRadius: 8 }] },
+        options: { indexAxis: 'y', responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } } }
       });
     }
 
-    // LANÇAMENTOS
+    // ================= 🤖 MOTOR COPILOT IA V3 =================
+    function toggleCopilotBox() { const box=document.getElementById("copilotChatBox"); const willOpen=box.classList.contains("hidden"); box.classList.toggle("hidden"); if(willOpen) setTimeout(()=>document.getElementById("copilotInputText")?.focus(),100); }
+    function toggleCopilotHelp() { document.getElementById("copilotHelpPanel").classList.toggle("hidden"); }
+    function useCopilotExample(example) { const input=document.getElementById("copilotInputText"); input.value=example; input.focus(); document.getElementById("copilotHelpPanel")?.classList.add("hidden"); }
+    function handleCopilotKeydown(event) { if(event.key==="Enter"&&!event.shiftKey){event.preventDefault();sendCopilotText();} }
+    function setCopilotBusy(isBusy){ const btn=document.getElementById("btnCopilotSend"), input=document.getElementById("copilotInputText"); if(!btn||!input)return; btn.disabled=isBusy; input.disabled=isBusy; btn.innerHTML=isBusy?'<i class="fa-solid fa-spinner fa-spin text-xs"></i>':'<i class="fa-solid fa-arrow-up text-sm"></i>'; btn.classList.toggle("opacity-60",isBusy); }
+    function addCopilotMessage(sender,text){ const box=document.getElementById("copilotMessages"), div=document.createElement("div"); div.className=`copilot-message ${sender==='user'?"ml-8 bg-amber-500 text-slate-950 p-3 rounded-2xl rounded-br-md font-semibold shadow-sm":"mr-6 bg-slate-900 text-slate-200 p-3 rounded-2xl rounded-bl-md border border-slate-800"}`; div.innerText=text; box.appendChild(div); box.scrollTop=box.scrollHeight; }
+    function sendCopilotText(){ const input=document.getElementById("copilotInputText"), text=input.value.trim(); if(!text || input.disabled)return; addCopilotMessage('user',text); input.value=""; processCopilotCommand(text); }
+    function toggleCopilotVoice(){ document.getElementById("copilotChatBox").classList.remove("hidden"); startGlobalVoiceRecognition(); }
+    function startGlobalVoiceRecognition(){ const SpeechRecognition=window.SpeechRecognition||window.webkitSpeechRecognition; if(!SpeechRecognition)return addCopilotMessage('ai',"⚠️ Seu navegador não oferece reconhecimento de voz."); const recognition=new SpeechRecognition(); recognition.lang="pt-BR"; recognition.interimResults=false; recognition.maxAlternatives=1; addCopilotMessage('ai',"🎙️ Estou ouvindo. Fale seu comando..."); try{recognition.start();}catch(e){console.warn("SpeechRecognition:",e);} recognition.onresult=e=>{const transcript=e.results[0][0].transcript; addCopilotMessage('user',`🎙️ ${transcript}`); processCopilotCommand(transcript);}; recognition.onerror=e=>{console.warn("SpeechRecognition error:",e); addCopilotMessage('ai',"⚠️ Não consegui interpretar o áudio. Tente novamente.");}; }
+
+    // O browser envia somente o comando para a Edge Function.
+    // A GEMINI_API_KEY fica exclusivamente no ambiente de servidor.
+    function detectLocalNavigation(prompt) {
+      const normalized = String(prompt || "")
+        .normalize("NFD")
+        .replace(/[\u0300-\u036f]/g, "")
+        .toLowerCase()
+        .trim();
+
+      const yearMatch = normalized.match(/\b(20\d{2})\b/);
+      const year = yearMatch ? Number(yearMatch[1]) : 0;
+
+      const isNavigationVerb =
+        /^(abra|abrir|abre|mostre|mostrar|va para|ir para|acesse|acessar|quero ver|quero abrir|entre em|entre na)\b/.test(normalized);
+
+      if (!isNavigationVerb) return null;
+
+      if (/\b(dashboard|painel)\b/.test(normalized)) {
+        return { tela: "dashboard", year };
+      }
+
+      if (/\b(bonus|bonos|apuracao)\b/.test(normalized)) {
+        return { tela: "apuracao", year };
+      }
+
+      if (/\b(lancamentos?|avaliacoes?)\b/.test(normalized)) {
+        return { tela: "evaluations", year: 0 };
+      }
+
+      if (/\b(ocorrencias?|perguntas?)\b/.test(normalized)) {
+        return { tela: "questions", year: 0 };
+      }
+
+      if (/\b(colaboradores?|avaliados?|funcionarios?)\b/.test(normalized)) {
+        return { tela: "workers", year: 0 };
+      }
+
+      if (/\b(parametros?|configuracoes?)\b/.test(normalized)) {
+        return { tela: "config", year: 0 };
+      }
+
+      return null;
+    }
+
+    function applyCopilotNavigation(tela, year = 0) {
+      if (year > 0) {
+        if (tela === "apuracao") {
+          setBonusYear(year);
+        } else if (tela === "dashboard") {
+          setDashboardYear(year);
+        }
+      }
+
+      navTo(tela);
+
+      const labels = {
+        dashboard: "DASHBOARD",
+        evaluations: "LANÇAMENTOS",
+        questions: "OCORRÊNCIAS",
+        workers: "AVALIADOS",
+        apuracao: "BÔNUS",
+        config: "PARÂMETROS"
+      };
+
+      const suffix =
+        ((tela === "apuracao" || tela === "dashboard") && year > 0)
+          ? ` — ${year}`
+          : "";
+
+      addCopilotMessage(
+        "ai",
+        `✅ Tela alterada para: ${labels[tela] || tela.toUpperCase()}${suffix}`
+      );
+    }
+
+    function parseDateFlexible(value) {
+      if (!value) return null;
+
+      const text = String(value).trim();
+
+      let match = text.match(/^(\d{4})-(\d{2})-(\d{2})$/);
+      if (match) {
+        const d = new Date(
+          Number(match[1]),
+          Number(match[2]) - 1,
+          Number(match[3])
+        );
+        return Number.isNaN(d.getTime()) ? null : d;
+      }
+
+      match = text.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/);
+      if (match) {
+        const d = new Date(
+          Number(match[3]),
+          Number(match[2]) - 1,
+          Number(match[1])
+        );
+        return Number.isNaN(d.getTime()) ? null : d;
+      }
+
+      return null;
+    }
+
+    function parseEvaluationRange(periodDates) {
+      const text = String(periodDates || "");
+
+      const matches = [
+        ...text.matchAll(/(\d{1,2}\/\d{1,2}\/\d{4})/g)
+      ].map(m => m[1]);
+
+      if (matches.length >= 2) {
+        return {
+          start: parseDateFlexible(matches[0]),
+          end: parseDateFlexible(matches[1])
+        };
+      }
+
+      return null;
+    }
+
+    function dateKey(date) {
+      if (!date) return "";
+      return [
+        date.getFullYear(),
+        String(date.getMonth() + 1).padStart(2, "0"),
+        String(date.getDate()).padStart(2, "0")
+      ].join("-");
+    }
+
+    function formatDateBR(date) {
+      return date
+        ? date.toLocaleDateString("pt-BR")
+        : "";
+    }
+
+    async function handleSafeDeleteEvaluation(args) {
+      const workerName = String(args?.nome || "").trim();
+      const start = parseDateFlexible(args?.periodo_inicio);
+      const end = parseDateFlexible(args?.periodo_fim);
+
+      if (!workerName) {
+        addCopilotMessage(
+          "ai",
+          "⚠️ Para excluir um lançamento, preciso saber qual colaborador."
+        );
+        return;
+      }
+
+      // Regra de segurança: nunca excluir sem período explícito.
+      if (!start || !end) {
+        addCopilotMessage(
+          "ai",
+          `🔒 Para sua segurança, não vou excluir nenhum lançamento de '${workerName}' sem um período específico. Informe, por exemplo: 24/08/2026 a 30/08/2026.`
+        );
+        return;
+      }
+
+      const workerKey = workerName.toLowerCase();
+
+      const matches = EVALUATIONS.filter(e => {
+        const nameMatches =
+          String(e.worker_name || "").trim().toLowerCase() === workerKey;
+
+        const range = parseEvaluationRange(e.period_dates);
+
+        return (
+          nameMatches &&
+          range?.start &&
+          range?.end &&
+          dateKey(range.start) === dateKey(start) &&
+          dateKey(range.end) === dateKey(end)
+        );
+      });
+
+      if (matches.length === 0) {
+        addCopilotMessage(
+          "ai",
+          `⚠️ Não encontrei um lançamento de '${workerName}' no período ${formatDateBR(start)} a ${formatDateBR(end)}.`
+        );
+        return;
+      }
+
+      if (matches.length > 1) {
+        addCopilotMessage(
+          "ai",
+          `⚠️ Encontrei ${matches.length} lançamentos de '${workerName}' nesse período. Não vou escolher um registro por conta própria. Precisamos identificar o lançamento exato.`
+        );
+        return;
+      }
+
+      const target = matches[0];
+
+      const totalOccurrences = Array.isArray(target.answers)
+        ? target.answers.reduce(
+            (sum, item) => sum + (Number(item.count) || 0),
+            0
+          )
+        : 0;
+
+      const confirmed = window.confirm(
+        `CONFIRMAÇÃO DE EXCLUSÃO\n\n` +
+        `Colaborador: ${target.worker_name}\n` +
+        `Período: ${formatDateBR(start)} a ${formatDateBR(end)}\n` +
+        `Ocorrências: ${totalOccurrences}\n` +
+        `Pontos abatidos: ${Number(target.totalScore) || 0}\n\n` +
+        `Esta ação é destrutiva e não será executada sem sua confirmação.\n\n` +
+        `Deseja realmente excluir este lançamento?`
+      );
+
+      if (!confirmed) {
+        addCopilotMessage(
+          "ai",
+          "🛡️ Exclusão cancelada. Nenhum dado foi alterado."
+        );
+        return;
+      }
+
+      const { error } =
+        await db
+          .from("avaliacoes_ranking")
+          .delete()
+          .eq("id", target.id);
+
+      if (error) {
+        console.error("Erro ao excluir lançamento:", error);
+        addCopilotMessage(
+          "ai",
+          `❌ Não foi possível excluir o lançamento: ${error.message}`
+        );
+        return;
+      }
+
+      await fetchAllFromSupabase("evaluations");
+      navTo("evaluations");
+
+      addCopilotMessage(
+        "ai",
+        `🗑️ Lançamento de '${target.worker_name}' do período ${formatDateBR(start)} a ${formatDateBR(end)} excluído com sucesso.`
+      );
+    }
+
+    async function processCopilotCommand(userPrompt) {
+      const prompt = String(userPrompt || "").trim();
+      if (!prompt) return;
+
+      setCopilotBusy(true);
+      addCopilotMessage("ai", "🤖 Analisando intenção com a IA...");
+
+      // Comandos de navegação inequívocos não precisam atravessar a rede
+      // até o Gemini. Isso reduz latência perceptível e também custo.
+      const localNavigation = detectLocalNavigation(prompt);
+
+      if (localNavigation) {
+        applyCopilotNavigation(
+          localNavigation.tela,
+          localNavigation.year
+        );
+        setCopilotBusy(false);
+        return;
+      }
+
+      const yearMatch = prompt.match(/\b(20\d{2})\b/);
+      const requestedYear =
+        yearMatch ? Number(yearMatch[1]) : 0;
+
+      const normalizedPrompt = prompt
+        .normalize("NFD")
+        .replace(/[\u0300-\u036f]/g, "")
+        .toLowerCase();
+
+      const bonusRequested =
+        /\b(bonus|bonos|apuracao|apuracao do bonus|resultado do bonus)\b/.test(
+          normalizedPrompt
+        );
+
+      try {
+        const { data, error } =
+          await db.functions.invoke("robust-copilot", {
+            body: { prompt }
+          });
+
+        if (error) {
+          console.error("Erro na Edge Function:", error);
+          addCopilotMessage(
+            "ai",
+            `⚠️ Não consegui acessar o Copilot seguro. ${error.message || "Verifique a Edge Function."}`
+          );
+          return;
+        }
+
+        if (!data?.ok || !data?.intent) {
+          console.error(
+            "Resposta inválida da Edge Function:",
+            data
+          );
+
+          addCopilotMessage(
+            "ai",
+            `⚠️ O Copilot não retornou uma intenção válida. ${data?.error || ""}`.trim()
+          );
+          return;
+        }
+
+        const parsed = data.intent;
+
+        if (bonusRequested) {
+          parsed.nome_tela = "apuracao";
+          parsed.acao = "navegar";
+        }
+
+        if (requestedYear >= 2000 && requestedYear <= 2100) {
+          parsed.ano_referencia = requestedYear;
+        }
+
+        console.log(
+          "Robust Copilot — intenção final:",
+          parsed
+        );
+
+        if (
+          parsed.acao === "navegar" &&
+          parsed.nome_tela
+        ) {
+          applyCopilotNavigation(
+            parsed.nome_tela.toLowerCase(),
+            Number(parsed.ano_referencia) || 0
+          );
+
+        } else if (
+          parsed.acao === "cadastrar_avaliado"
+        ) {
+          if (!parsed.nome) {
+            addCopilotMessage(
+              "ai",
+              "⚠️ Preciso do nome do colaborador."
+            );
+            return;
+          }
+
+          await executeCopilotFunction(
+            "cadastrar_avaliado",
+            {
+              nome: parsed.nome,
+              funcao: parsed.funcao || "Geral"
+            }
+          );
+
+        } else if (
+          parsed.acao === "editar_avaliado"
+        ) {
+          await executeCopilotFunction(
+            "editar_avaliado",
+            {
+              nome_busca: parsed.nome,
+              nova_funcao: parsed.funcao
+            }
+          );
+
+        } else if (
+          parsed.acao === "excluir_avaliado"
+        ) {
+          const confirmed = window.confirm(
+            `CONFIRMAÇÃO DE EXCLUSÃO\n\n` +
+            `Colaborador: ${parsed.nome}\n\n` +
+            `Deseja realmente excluir este colaborador?`
+          );
+
+          if (!confirmed) {
+            addCopilotMessage(
+              "ai",
+              "🛡️ Exclusão cancelada. Nenhum dado foi alterado."
+            );
+            return;
+          }
+
+          await executeCopilotFunction(
+            "excluir_avaliado",
+            { nome: parsed.nome }
+          );
+
+        } else if (
+          parsed.acao === "cadastrar_ocorrencia"
+        ) {
+          const desc =
+            parsed.descricao ||
+            parsed.nome ||
+            "Ocorrência sem nome";
+
+          const pts =
+            Number.isFinite(Number(parsed.pontos))
+              ? Number(parsed.pontos)
+              : 10;
+
+          await executeCopilotFunction(
+            "cadastrar_ocorrencia",
+            {
+              descricao: desc,
+              pontos: pts
+            }
+          );
+
+        } else if (
+          parsed.acao === "editar_ocorrencia"
+        ) {
+          await executeCopilotFunction(
+            "editar_ocorrencia",
+            {
+              descricao_busca:
+                parsed.descricao ||
+                parsed.nome,
+              novos_pontos:
+                Number(parsed.pontos)
+            }
+          );
+
+        } else if (
+          parsed.acao === "excluir_ocorrencia"
+        ) {
+          const confirmed = window.confirm(
+            `CONFIRMAÇÃO DE EXCLUSÃO\n\n` +
+            `Ocorrência: ${parsed.descricao || parsed.nome}\n\n` +
+            `Deseja realmente excluir esta ocorrência?`
+          );
+
+          if (!confirmed) {
+            addCopilotMessage(
+              "ai",
+              "🛡️ Exclusão cancelada. Nenhum dado foi alterado."
+            );
+            return;
+          }
+
+          await executeCopilotFunction(
+            "excluir_ocorrencia",
+            {
+              descricao:
+                parsed.descricao ||
+                parsed.nome
+            }
+          );
+
+        } else if (
+          parsed.acao === "excluir_lancamento"
+        ) {
+          await handleSafeDeleteEvaluation(parsed);
+
+        } else if (
+          parsed.acao === "salvar_lancamento_semanal"
+        ) {
+          await executeCopilotFunction(
+            "salvar_lancamento_semanal",
+            {
+              nome_avaliado: parsed.nome,
+              ocorrencia_descricao:
+                parsed.descricao,
+              pontos:
+                Number(parsed.pontos) || 0,
+              quantidade:
+                Number(parsed.quantidade) || 1
+            }
+          );
+
+        } else {
+          addCopilotMessage(
+            "ai",
+            "🤔 Não consegui identificar uma ação. Clique em ? para ver exemplos de comandos."
+          );
+        }
+
+      } catch (err) {
+        console.error(
+          "Erro no Copilot:",
+          err
+        );
+
+        addCopilotMessage(
+          "ai",
+          "❌ Ocorreu um erro ao processar o comando. Verifique se a Edge Function 'robust-copilot' está publicada."
+        );
+
+      } finally {
+        setCopilotBusy(false);
+      }
+    }
+
+    function setBonusYear(year) {
+      const select = document.getElementById("apuracaoYear");
+      if (!select) return;
+
+      const value = String(year);
+
+      if (![...select.options].some(o => o.value === value)) {
+        const option = document.createElement("option");
+        option.value = value;
+        option.textContent = value;
+        select.appendChild(option);
+      }
+
+      select.value = value;
+      renderApuracao();
+    }
+
+    async function executeCopilotFunction(functionName, args) {
+      if (functionName === "mudar_tela") {
+        navTo(args.nome_tela);
+        addCopilotMessage('ai', `✅ Tela alterada para: ${args.nome_tela.toUpperCase()}`);
+      } 
+      // === CRUD COLABORADORES ===
+      else if (functionName === "cadastrar_avaliado") {
+        await db.from('colaboradores').insert([{ name: args.nome, role: args.funcao }]);
+        await fetchAllFromSupabase('workers');
+        navTo('workers');
+        addCopilotMessage('ai', `✅ Colaborador '${args.nome}' (${args.funcao}) cadastrado!`);
+      } 
+      else if (functionName === "editar_avaliado") {
+        const target = WORKERS.find(w => w.name.toLowerCase().includes(args.nome_busca.toLowerCase()));
+        if (!target) return addCopilotMessage('ai', `⚠️ Colaborador '${args.nome_busca}' não encontrado.`);
+        
+        await db.from('colaboradores').update({ role: args.nova_funcao }).eq('id', target.id);
+        await fetchAllFromSupabase('workers');
+        navTo('workers');
+        addCopilotMessage('ai', `✅ Cargo do colaborador '${target.name}' alterado para '${args.nova_funcao}'!`);
+      }
+      else if (functionName === "excluir_avaliado") {
+        const target = WORKERS.find(w => w.name.toLowerCase().includes(args.nome.toLowerCase()));
+        if (!target) return addCopilotMessage('ai', `⚠️ Colaborador '${args.nome}' não encontrado.`);
+
+        await db.from('colaboradores').delete().eq('id', target.id);
+        await fetchAllFromSupabase('workers');
+        navTo('workers');
+        addCopilotMessage('ai', `🗑️ Colaborador '${target.name}' excluído com sucesso!`);
+      }
+      // === CRUD OCORRÊNCIAS ===
+      else if (functionName === "cadastrar_ocorrencia") {
+        await db.from('perguntas_ranking').insert([{ 
+          question_text: args.descricao, 
+          penalty_points: args.pontos, 
+          points_per_occurrence: args.pontos 
+        }]);
+        await fetchAllFromSupabase('questions');
+        navTo('questions');
+        addCopilotMessage('ai', `✅ Ocorrência '${args.descricao}' (-${args.pontos} pts) cadastrada!`);
+      }
+      else if (functionName === "editar_ocorrencia") {
+        const target = QUESTIONS.find(q => q.question_text.toLowerCase().includes(args.descricao_busca.toLowerCase()));
+        if (!target) return addCopilotMessage('ai', `⚠️ Ocorrência '${args.descricao_busca}' não encontrada.`);
+
+        await db.from('perguntas_ranking').update({ penalty_points: args.novos_pontos, points_per_occurrence: args.novos_pontos }).eq('id', target.id);
+        await fetchAllFromSupabase('questions');
+        navTo('questions');
+        addCopilotMessage('ai', `✏️ Ocorrência '${target.question_text}' atualizada para -${args.novos_pontos} pts!`);
+      }
+      else if (functionName === "excluir_ocorrencia") {
+        const target = QUESTIONS.find(q => q.question_text.toLowerCase().includes(args.descricao.toLowerCase()));
+        if (!target) return addCopilotMessage('ai', `⚠️ Ocorrência '${args.descricao}' não encontrada.`);
+
+        await db.from('perguntas_ranking').delete().eq('id', target.id);
+        await fetchAllFromSupabase('questions');
+        navTo('questions');
+        addCopilotMessage('ai', `🗑️ Ocorrência '${target.question_text}' excluída com sucesso!`);
+      }
+      // === LANÇAMENTOS ===
+      else if (functionName === "salvar_lancamento_semanal") {
+        const worker = WORKERS.find(w => w.name.toLowerCase().includes(args.nome_avaliado.toLowerCase()));
+        if (!worker) return addCopilotMessage('ai', `⚠️ Colaborador '${args.nome_avaliado}' não encontrado.`);
+
+        const question = QUESTIONS.find(q => q.question_text.toLowerCase().includes(args.ocorrencia_descricao.toLowerCase()));
+        const penaltyUnit = question ? parseFloat(question.penalty_points || 50) : 50;
+        const totalScore = args.quantidade * penaltyUnit;
+
+        const now = new Date();
+        const day = now.getDay();
+        const diffToMonday = now.getDate() - day + (day === 0 ? -6 : 1);
+        const start = new Date(now);
+        start.setHours(0, 0, 0, 0);
+        start.setDate(diffToMonday);
+
+        const end = new Date(start);
+        end.setDate(start.getDate() + 6);
+
+        const formatDate = d => d.toLocaleDateString('pt-BR');
+        const datesStr = `${formatDate(start)} à ${formatDate(end)} (Copilot IA)`;
+
+        const answers = QUESTIONS.map(q => ({
+          question: q.question_text,
+          count: q.question_text.toLowerCase().includes(args.ocorrencia_descricao.toLowerCase()) ? args.quantidade : 0,
+          unitPoints: parseFloat(q.penalty_points || 0)
+        }));
+
+        await db.from('avaliacoes_ranking').insert([{
+          worker_name: worker.name,
+          role: worker.role,
+          period_dates: datesStr,
+          evaluator: 'Copilot IA',
+          total_score: totalScore,
+          answers: answers
+        }]);
+
+        await fetchAllFromSupabase('evaluations');
+        navTo('evaluations');
+        addCopilotMessage('ai', `✅ Lançamento registrado para ${worker.name}: ${args.quantidade}x ${args.ocorrencia_descricao}`);
+      }
+    }
+
+    // FORMULÁRIOS E DEMAIS FUNÇÕES DO SISTEMA
     function renderEvaluationsGrid() {
       const tbody = document.getElementById("evalGridBody");
       const query = document.getElementById("evalSearchQuery").value.toLowerCase();
@@ -816,9 +1792,7 @@
       document.getElementById("evalModal").classList.remove("hidden");
     }
 
-    function closeEvalModal() {
-      document.getElementById("evalModal").classList.add("hidden");
-    }
+    function closeEvalModal() { document.getElementById("evalModal").classList.add("hidden"); }
 
     function editEvaluation(id) {
       const item = EVALUATIONS.find(e => e.id === id);
@@ -835,7 +1809,7 @@
     async function deleteEvaluation(id) {
       if (confirm("Excluir este lançamento de ocorrência?")) {
         await db.from('avaliacoes_ranking').delete().eq('id', id);
-        await fetchAllFromSupabase();
+        await fetchAllFromSupabase('evaluations');
       }
     }
 
@@ -846,7 +1820,6 @@
       QUESTIONS.forEach((q, idx) => {
         let savedQty = 0;
         if (savedAnswers && savedAnswers[idx]) savedQty = savedAnswers[idx].count || 0;
-
         const penaltyPts = parseFloat(q.penalty_points || q.points_per_occurrence || 0);
 
         const tr = document.createElement("tr");
@@ -861,7 +1834,6 @@
         `;
         tbody.appendChild(tr);
       });
-
       calculateTotalScore();
     }
 
@@ -872,12 +1844,9 @@
         const unitPts = parseFloat(input.getAttribute("data-unit")) || 0;
         const itemTotal = qty * unitPts;
         totalPenalty += itemTotal;
-
         const tr = input.closest("tr");
-        const display = tr.querySelector(".q-score-display");
-        display.innerText = itemTotal > 0 ? `-${itemTotal} pts` : `0 pts`;
+        tr.querySelector(".q-score-display").innerText = itemTotal > 0 ? `-${itemTotal} pts` : `0 pts`;
       });
-
       document.getElementById("evalTotalScore").innerText = `-${totalPenalty} pts`;
     }
 
@@ -908,17 +1877,15 @@
       }
 
       closeEvalModal();
-      await fetchAllFromSupabase();
+      await fetchAllFromSupabase('evaluations');
     }
 
     // OCORRÊNCIAS
     function renderQuestionsTable() {
       const tbody = document.getElementById("questionsTableBody");
       tbody.innerHTML = "";
-
       QUESTIONS.forEach(q => {
         const penaltyPts = parseFloat(q.penalty_points || q.points_per_occurrence || 0);
-
         const tr = document.createElement("tr");
         tr.className = "hover:bg-slate-50 border-b border-slate-100";
         tr.innerHTML = `
@@ -926,8 +1893,8 @@
           <td class="p-3 text-center font-bold text-rose-600">-${penaltyPts} pts</td>
           <td class="p-3 text-center">
             <div class="flex justify-center gap-1">
-              <button onclick="editQuestion('${q.id}')" title="Editar" class="p-1.5 bg-slate-100 hover:bg-amber-500 hover:text-slate-950 text-slate-600 rounded-lg"><i class="fa-solid fa-pen"></i></button>
-              <button onclick="deleteQuestion('${q.id}')" title="Excluir" class="p-1.5 bg-slate-100 hover:bg-rose-600 hover:text-white text-rose-600 rounded-lg"><i class="fa-solid fa-trash"></i></button>
+              <button onclick="editQuestion('${q.id}')" class="p-1.5 bg-slate-100 hover:bg-amber-500 rounded-lg"><i class="fa-solid fa-pen"></i></button>
+              <button onclick="deleteQuestion('${q.id}')" class="p-1.5 bg-slate-100 hover:bg-rose-600 hover:text-white text-rose-600 rounded-lg"><i class="fa-solid fa-trash"></i></button>
             </div>
           </td>
         `;
@@ -942,9 +1909,7 @@
       document.getElementById("questionModal").classList.remove("hidden");
     }
 
-    function closeQuestionModal() {
-      document.getElementById("questionModal").classList.add("hidden");
-    }
+    function closeQuestionModal() { document.getElementById("questionModal").classList.add("hidden"); }
 
     function editQuestion(id) {
       const q = QUESTIONS.find(item => item.id === id);
@@ -958,67 +1923,176 @@
     async function saveQuestion() {
       const question_text = document.getElementById("qModalText").value;
       const penalty_points = parseFloat(document.getElementById("qModalPenalty").value) || 0;
-
       if (!question_text) return alert("Preencha a descrição!");
 
       const record = { question_text, penalty_points, points_per_occurrence: penalty_points };
-
       if (editingQuestionId) {
         await db.from('perguntas_ranking').update(record).eq('id', editingQuestionId);
       } else {
         await db.from('perguntas_ranking').insert([record]);
       }
-
       closeQuestionModal();
-      await fetchAllFromSupabase();
+      await fetchAllFromSupabase('questions');
     }
 
     async function deleteQuestion(id) {
       if (confirm("Excluir esta ocorrência?")) {
         await db.from('perguntas_ranking').delete().eq('id', id);
-        await fetchAllFromSupabase();
+        await fetchAllFromSupabase('questions');
       }
     }
 
     // BÔNUS
+    function getEvaluationPeriodStart(evaluation) {
+      const text = String(evaluation?.period_dates || "");
+
+      // Preferimos a data do período, pois ela representa o período de referência.
+      const match = text.match(/\b(\d{1,2})\/(\d{1,2})\/(\d{4})\b/);
+
+      if (match) {
+        const day = Number(match[1]);
+        const month = Number(match[2]) - 1;
+        const year = Number(match[3]);
+        const date = new Date(year, month, day);
+
+        if (!Number.isNaN(date.getTime())) return date;
+      }
+
+      // Fallback somente para registros antigos que não tenham uma data
+      // de período parseável.
+      if (evaluation?.createdAt instanceof Date && !Number.isNaN(evaluation.createdAt.getTime())) {
+        return evaluation.createdAt;
+      }
+
+      return null;
+    }
+
+    function getEvaluationReferenceYear(evaluation) {
+      const periodStart = getEvaluationPeriodStart(evaluation);
+      return periodStart ? periodStart.getFullYear() : null;
+    }
+
+    function getAvailableBonusYears() {
+      const years = new Set();
+
+      EVALUATIONS.forEach(e => {
+        const year = getEvaluationReferenceYear(e);
+        if (year) years.add(year);
+      });
+
+      const currentYear = new Date().getFullYear();
+      years.add(currentYear);
+
+      return [...years].sort((a, b) => a - b);
+    }
+
+    function populateBonusYears(preferredYear = null) {
+      const select = document.getElementById("apuracaoYear");
+      if (!select) return;
+
+      const currentValue = preferredYear || Number(select.value) || new Date().getFullYear();
+      const years = getAvailableBonusYears();
+
+      select.innerHTML = "";
+
+      years.forEach(year => {
+        const option = document.createElement("option");
+        option.value = String(year);
+        option.textContent = String(year);
+        select.appendChild(option);
+      });
+
+      if (!years.includes(Number(currentValue))) {
+        const option = document.createElement("option");
+        option.value = String(currentValue);
+        option.textContent = String(currentValue);
+        select.appendChild(option);
+      }
+
+      select.value = String(currentValue);
+    }
+
     function renderApuracao() {
-      const selectedYear = document.getElementById("apuracaoYear").value;
-      document.getElementById("apuracaoYearTitle").innerText = `Ano: ${selectedYear}`;
+      const select = document.getElementById("apuracaoYear");
+      const selectedYear = Number(select?.value || new Date().getFullYear());
+
+      populateBonusYears(selectedYear);
+
+      const finalYear = Number(select?.value || selectedYear);
+
+      document.getElementById("apuracaoYearTitle").innerText = `Ano: ${finalYear}`;
 
       const tbody = document.getElementById("apuracaoTableBody");
       tbody.innerHTML = "";
 
-      const yearEvals = EVALUATIONS.filter(e => e.createdAt && String(e.createdAt.getFullYear()) === selectedYear);
+      /*
+       * REGRA DE NEGÓCIO:
+       *
+       * A tela de Bônus não parte da tabela de colaboradores.
+       * Ela parte dos LANÇAMENTOS daquele período.
+       *
+       * Portanto:
+       * - colaborador sem lançamento no ano NÃO aparece;
+       * - colaborador lançado em 2025 aparece em 2025;
+       * - o mesmo colaborador pode aparecer em 2026 se houver
+       *   lançamento em 2026;
+       * - cadastro do colaborador, sozinho, não gera bônus.
+       */
+      const yearEvals = EVALUATIONS.filter(e =>
+        getEvaluationReferenceYear(e) === finalYear
+      );
 
       const workerMap = {};
-      WORKERS.forEach(w => {
-        workerMap[w.name] = { name: w.name, role: w.role, totalPenalty: 0, occurrencesCount: 0 };
-      });
 
       yearEvals.forEach(e => {
-        if (!workerMap[e.worker_name]) {
-          workerMap[e.worker_name] = { name: e.worker_name, role: e.role, totalPenalty: 0, occurrencesCount: 0 };
+        const key = String(e.worker_name || "").trim();
+        if (!key) return;
+
+        if (!workerMap[key]) {
+          workerMap[key] = {
+            name: e.worker_name,
+            role: e.role || "",
+            totalPenalty: 0,
+            occurrencesCount: 0
+          };
         }
-        workerMap[e.worker_name].totalPenalty += e.totalScore;
-        
-        if (e.answers && Array.isArray(e.answers)) {
-          e.answers.forEach(a => { workerMap[e.worker_name].occurrencesCount += (a.count || 0); });
+
+        workerMap[key].totalPenalty += Number(e.totalScore) || 0;
+
+        if (Array.isArray(e.answers)) {
+          e.answers.forEach(a => {
+            workerMap[key].occurrencesCount += Number(a.count) || 0;
+          });
         }
       });
 
-      let totalUSDAll = 0;
       const list = Object.values(workerMap);
 
+      let totalUSDAll = 0;
+
       if (list.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="7" class="p-6 text-center text-slate-400 border">Nenhum avaliado cadastrado.</td></tr>`;
+        tbody.innerHTML = `
+          <tr>
+            <td colspan="7" class="p-6 text-center text-slate-400 border">
+              Nenhum lançamento encontrado para ${finalYear}.
+            </td>
+          </tr>
+        `;
       } else {
         list.forEach(item => {
-          const remainingPoints = Math.max(0, GLOBAL_CONFIG.initialPoints - item.totalPenalty);
-          const finalUSD = remainingPoints * GLOBAL_CONFIG.pointValue;
+          const remainingPoints = Math.max(
+            0,
+            GLOBAL_CONFIG.initialPoints - item.totalPenalty
+          );
+
+          const finalUSD =
+            remainingPoints * GLOBAL_CONFIG.pointValue;
+
           totalUSDAll += finalUSD;
 
           const tr = document.createElement("tr");
           tr.className = "border-b border-slate-200";
+
           tr.innerHTML = `
             <td class="p-3 font-bold text-slate-800 border">${item.name}</td>
             <td class="p-3 text-slate-600 border">${item.role}</td>
@@ -1028,11 +2102,13 @@
             <td class="p-3 text-center font-black text-amber-600 border">${remainingPoints} pts</td>
             <td class="p-3 text-center font-black text-emerald-600 border text-sm">$${finalUSD.toFixed(2)}</td>
           `;
+
           tbody.appendChild(tr);
         });
       }
 
-      document.getElementById("apurTotalNet").innerText = `$${totalUSDAll.toFixed(2)}`;
+      document.getElementById("apurTotalNet").innerText =
+        `$${totalUSDAll.toFixed(2)}`;
     }
 
     // PARÂMETROS
@@ -1044,10 +2120,9 @@
     async function saveGlobalConfig() {
       const initial_points = parseFloat(document.getElementById("cfgInitialPoints").value) || 500;
       const point_value = parseFloat(document.getElementById("cfgPointValue").value) || 1.00;
-
       await db.from('parametros_globais').upsert([{ id: 1, initial_points, point_value }]);
       alert("Parâmetros globais salvos no Supabase!");
-      await fetchAllFromSupabase();
+      await fetchAllFromSupabase('config');
       navTo('dashboard');
     }
 
@@ -1055,7 +2130,6 @@
     function renderWorkersTable() {
       const tbody = document.getElementById("workersTableBody");
       tbody.innerHTML = "";
-
       WORKERS.forEach(w => {
         const tr = document.createElement("tr");
         tr.className = "hover:bg-slate-50 border-b border-slate-100";
@@ -1064,8 +2138,8 @@
           <td class="p-3 text-slate-600">${w.role}</td>
           <td class="p-3 text-center">
             <div class="flex justify-center gap-1">
-              <button onclick="editWorker('${w.id}')" title="Editar" class="p-1.5 bg-slate-100 hover:bg-amber-500 hover:text-slate-950 text-slate-600 rounded-lg"><i class="fa-solid fa-pen"></i></button>
-              <button onclick="deleteWorker('${w.id}')" title="Excluir" class="p-1.5 bg-slate-100 hover:bg-rose-600 hover:text-white text-rose-600 rounded-lg"><i class="fa-solid fa-trash"></i></button>
+              <button onclick="editWorker('${w.id}')" class="p-1.5 bg-slate-100 hover:bg-amber-500 rounded-lg"><i class="fa-solid fa-pen"></i></button>
+              <button onclick="deleteWorker('${w.id}')" class="p-1.5 bg-slate-100 hover:bg-rose-600 hover:text-white text-rose-600 rounded-lg"><i class="fa-solid fa-trash"></i></button>
             </div>
           </td>
         `;
@@ -1080,9 +2154,7 @@
       document.getElementById("workerModal").classList.remove("hidden");
     }
 
-    function closeWorkerModal() {
-      document.getElementById("workerModal").classList.add("hidden");
-    }
+    function closeWorkerModal() { document.getElementById("workerModal").classList.add("hidden"); }
 
     function editWorker(id) {
       const w = WORKERS.find(item => item.id === id);
@@ -1103,17 +2175,18 @@
       } else {
         await db.from('colaboradores').insert([{ name, role }]);
       }
-
       closeWorkerModal();
-      await fetchAllFromSupabase();
+      await fetchAllFromSupabase('workers');
     }
 
     async function deleteWorker(id) {
       if (confirm("Remover este avaliado?")) {
         await db.from('colaboradores').delete().eq('id', id);
-        await fetchAllFromSupabase();
+        await fetchAllFromSupabase('workers');
       }
     }
+
+
   </script>
 </body>
 </html>
